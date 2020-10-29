@@ -1,12 +1,10 @@
 ---
 title: "Recruitment"
 author: 
-date: "Last Updated: 10/29/2020"
+date: "Last Updated: 10/15/2020"
 output: 
   html_document:
     theme: flatly
-    toc: TRUE
-    toc_float: TRUE
 ---
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -30,115 +28,16 @@ library(plyr)
 library(tigerstats)
 library(plotrix)
 library(RColorBrewer)
-library(reshape2)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
 
-```{r DK Log variable setup, echo = FALSE, message=FALSE}
-#DK Data
-DKdata <- read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_29OCT2020.csv')
-
-Atempt1Date <- as.Date(DKdata$rseal_dklog_026, format = "%m/%d/%Y")
-Atempt2Date <- as.Date(DKdata$rseal_dklog_029, format = "%m/%d/%Y")
-Atempt3Date <- as.Date(DKdata$rseal_dklog_032, format = "%m/%d/%Y")
-DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
-DKParsedData <- as_tibble(DKParsedData)
-```
-
-
-```{r recruitment, echo=FALSE, message=FALSE, warning=FALSE}
-Ntotal <- nrow(DKParsedData)
-Scheduled <-subset(DKParsedData,DKParsedData$rseal_dklog_025 == '4' | DKParsedData$rseal_dklog_028 == '4'| DKParsedData$rseal_dklog_031 == '4' )
-ScheduledCount <- nrow(Scheduled)
-#Number in DK Log compared to how many contacted so far
-Contacted <- subset(DKParsedData, DKParsedData$rseal_dklog_009 == '1' | DKParsedData$rseal_dklog_009 == '0')
-ToContact <- sum(nrow(DKParsedData) - nrow(Contacted))
-#Relative success rate (Number interested)
-Interested <- subset(DKParsedData, DKParsedData$rseal_dklog_009 == '1')
-Interested <- nrow(Interested)
-ToSched <- Interested - ScheduledCount
-NumInterested <-nrow(Interested)
-DKParsedData$eligibility <- ifelse(DKParsedData$rseal_dklog_012 == '1' & DKParsedData$rseal_dklog_013 == '1' & DKParsedData$rseal_dklog_014 == '1' & DKParsedData$rseal_dklog_015 == '1' & (DKParsedData$rseal_dklog_018 == '1'|DKParsedData$rseal_dklog_019___1 == '1'|DKParsedData$rseal_dklog_019___2 == '1'|DKParsedData$rseal_dklog_019___3 == '1'|DKParsedData$rseal_dklog_019___4 == '1') & DKParsedData$rseal_dklog_020 == '1' & DKParsedData$rseal_dklog_021 == '1', TRUE,FALSE)
-Eligible <- subset(DKParsedData, DKParsedData$rseal_dklog_038 == '1')
-Eligible <- nrow(Eligible)
-AttemptContact <-subset(DKParsedData,
-DKParsedData$rseal_dklog_025 == '1' | DKParsedData$rseal_dklog_025 == '2' | DKParsedData$rseal_dklog_025 == '3' | DKParsedData$rseal_dklog_025 == '4' | DKParsedData$rseal_dklog_025 == '5' | DKParsedData$rseal_dklog_025 == '6' | DKParsedData$rseal_dklog_028 == '1'| DKParsedData$rseal_dklog_028 == '2'| DKParsedData$rseal_dklog_028 == '3'| DKParsedData$rseal_dklog_028 == '4'| DKParsedData$rseal_dklog_028 == '5'| DKParsedData$rseal_dklog_028 == '6'| DKParsedData$rseal_dklog_031 == '1'| DKParsedData$rseal_dklog_031 == '2'| DKParsedData$rseal_dklog_031 == '3'| DKParsedData$rseal_dklog_031 == '4'| DKParsedData$rseal_dklog_031 == '5'| DKParsedData$rseal_dklog_031 == '6' )
-AttemptContact2 <- nrow(AttemptContact)
-ToContact <- sum(nrow(DKParsedData) - AttemptContact2)
-PercentInterested <- 100*sum(Interested, na.rm=T)/AttemptContact2
-SchedSuccess <-100*sum(ScheduledCount)/AttemptContact2
-TotalDK <- nrow(DKParsedData)
-ToCall <- TotalDK-AttemptContact2
-
-#DHS PercentInterested and scheduling success rate
-DHSsubset <- subset(DKParsedData, DKParsedData$rseal_dklog_006 == '2')
-DHSCount <- nrow(DHSsubset)
-DHSInterested <- subset(DHSsubset, DHSsubset$rseal_dklog_009 == '1')
-DHSInterested <- nrow(DHSInterested)
-DHSScheduled <-subset(DHSsubset,DHSsubset$rseal_dklog_025 == '4' | DHSsubset$rseal_dklog_028 == '4'| DHSsubset$rseal_dklog_031 == '4' )
-DHSScheduledCount <- nrow(DHSScheduled)
-DHSContacted <- AttemptContact <-subset(DHSsubset,
-DHSsubset$rseal_dklog_025 == '1' | DHSsubset$rseal_dklog_025 == '2' | DHSsubset$rseal_dklog_025 == '3' | DHSsubset$rseal_dklog_025 == '4' | DHSsubset$rseal_dklog_025 == '5' | DHSsubset$rseal_dklog_025 == '6' | DHSsubset$rseal_dklog_028 == '1'| DHSsubset$rseal_dklog_028 == '2'| DHSsubset$rseal_dklog_028 == '3'| DHSsubset$rseal_dklog_028 == '4'| DHSsubset$rseal_dklog_028 == '5'| DHSsubset$rseal_dklog_028 == '6'| DHSsubset$rseal_dklog_031 == '1'| DHSsubset$rseal_dklog_031 == '2'| DHSsubset$rseal_dklog_031 == '3'| DHSsubset$rseal_dklog_031 == '4'| DHSsubset$rseal_dklog_031 == '5'| DHSsubset$rseal_dklog_031 == '6' )
-DHSContacted <- nrow(DHSContacted)
-DHSPercentInterested <- 100*DHSInterested/DHSContacted
-DHSSchedSuccess <-100*DHSScheduledCount/DHSContacted
-```
-
-
-<font size = "4"> There are currently <font size="4" color="red"> **`r papaja::printnum(Ntotal)`**</font> potential participants in DK LOG, <font size="4" color="red"> **`r papaja::printnum(Eligible)`**</font> of whom have been confirmed as eligible. There are <font size="4" color="red"> **`r papaja::printnum(AttemptContact2)`**</font> participants who have been contacted and <font size="4" color="red"> **`r papaja::printnum(ToCall)`**</font> who still need to be contacted.</font> 
-
-<font size = "4"> There are currently <font size="4" color="red"> **`r papaja::printnum(ScheduledCount)`**</font> participants scheduled for (or have completed) their Wave 1 phone call, with a <font size="4" color="red"> **`r papaja::printnum(SchedSuccess)`\%**</font> scheduling success rate (number scheduled out of total contacted).</font>
-
-<font size = "4"> There are currently <font size="4" color="red"> **`r papaja::printnum(Interested)`**</font> participants who are interested, with <font size="4" color="red"> **`r papaja::printnum(ToSched)`**</font> who still need to be scheduled.</font> 
-
-<font size = "4"> Of those who were contacted, <font size="4" color="red"> **`r papaja::printnum(PercentInterested)`\%**</font> were interested, and there are currently <font size="4" color="red"> **`r ToContact`**</font> participants whose interest in participating has not been determined yet.</font> 
-
-<font size = "4"> So far, there are <font size="4" color="red"> **`r papaja::printnum(DHSCount)`**</font> potential participants from DHS Mailer, <font size="4" color="red"> **`r papaja::printnum(DHSContacted)`**</font> of whom have been contacted. Of those who were contacted, <font size="4" color="red"> **`r papaja::printnum(DHSInterested)` (`r papaja::printnum(DHSPercentInterested)`\%)**</font> participants showed interest and <font size="4" color="red"> **`r papaja::printnum(DHSScheduledCount)` (`r papaja::printnum(DHSSchedSuccess)`\%)**</font> participants got scheduled successfully.</font>
-
-
-```{r Not Interested Setup, fig.width=4, fig.height=4, echo = FALSE, message=FALSE}
-#Not Interested Reasons
-NotInt <- subset(DKParsedData,
-                   DKParsedData$rseal_dklog_010___0 == '1' |
-                   DKParsedData$rseal_dklog_010___1 == '1'| 
-                   DKParsedData$rseal_dklog_010___2 == '1' |
-                   DKParsedData$rseal_dklog_010___3 == '1'| 
-                   DKParsedData$rseal_dklog_010___4 == '1' |
-                   DKParsedData$rseal_dklog_010___5 == '1' |
-                   DKParsedData$rseal_dklog_010___6 == '1' |
-                   DKParsedData$rseal_dklog_010___7 == '1' |
-                   DKParsedData$rseal_dklog_010___8 == '1'|
-                   DKParsedData$rseal_dklog_010___9 == '1')
-NotInt2 <- dplyr::select (NotInt, rseal_dklog_010___0,rseal_dklog_010___1,rseal_dklog_010___2,rseal_dklog_010___3,rseal_dklog_010___4,rseal_dklog_010___5,rseal_dklog_010___6,rseal_dklog_010___7,rseal_dklog_010___8,rseal_dklog_010___9 )
-NotInt3<- t(NotInt2)
-rownames(NotInt3) <- c("Unknown", "Time Commitment","Too Stressed","Don't need help / Not a good fit for family","Privacy Concerns","Out of my comfort zone","Cultural / Language Barriers","I do not understand the project","I do not know the staff","Other")
-```   
-
-<font size = "4"> **Counts and reasons given by those not interested in participating.**</font> 
-
-``` {r Not Interested Reasons, fig.width=4, fig.height=4, echo = FALSE, message=FALSE}
-kable(NotInt3) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```  
-
-
-```{r RA calls, echo = FALSE, message=FALSE}
-# for summary of RA calls
-RAcalls1 <- select (DKdata, rseal_dklog_025, rseal_dklog_026, rseal_dklog_035)
-RAcalls1 <- as_tibble(RAcalls1)
-names(RAcalls1)<-c("AttStatus","AttDate", "RA")
-RAcalls2 <- select (DKdata, rseal_dklog_028, rseal_dklog_029, rseal_dklog_036)
-RAcalls2 <- as_tibble(RAcalls2)
-names(RAcalls2)<-c("AttStatus","AttDate", "RA")
-RAcalls3 <- select (DKdata, rseal_dklog_031, rseal_dklog_032, rseal_dklog_037)
-RAcalls3 <- as_tibble(RAcalls3)
-names(RAcalls3)<-c("AttStatus","AttDate", "RA")
-RAcalls <- rbind(RAcalls1, RAcalls2, RAcalls3)
-#print.data.frame(RAcalls)
-RASum <- RAcalls %>% 
-      group_by(RA) %>% tally()
-RASum <- RASum[-1,]
-kable(RASum) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"))
-```
+<iframe src ="https://dat-snaplab.shinyapps.io/RecruitmentPage/" style="border: none; width: 1500px; height: 1000px;"/>
+</iframe>
