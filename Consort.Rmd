@@ -64,32 +64,51 @@ Wave3NoComp <- length(which(SubInfo$rseal_subj_008==4))
 Wave3Comp <- length(which(SubInfo$rseal_subj_027___3==1))
 IntervComp <- sum(SubInfo$rseal_subj_032 != "")
 
-grViz("digraph consort {
+grViz("digraph {
 
-# node definitions with substituted label text
-node [shape = rectangle, fontname = Helvetica, penwidth = 2.0, fontname = Helvetica, attr_theme = Null]
+graph[rankdir=TD]
 
-A [label = '@@1']
+node[shape = rectangle, style = filled, fontsize = 20]
+
+subgraph cluster_1 {
+  graph[shape = rectangle, fontsize = 28, face = 'bold']
+  style = rounded
+  bgcolor = Gold
+  
+  label = < <font> <b>Pre-Consent</b> </font> >
+  node[shape = rectangle, fillcolor = LemonChiffon, margin = 0.25]
+  A [label = '@@1']
 B [label = '@@2']
 C [label = '@@3']
 D [label = '@@4', href='./Sources.html']
 F [label = '@@5']
-G [label = '@@6']
 H [label = '@@7']
 I [label = '@@8']
 J [label = '@@9']
-K [label = '@@10']
-L [label = '@@11']
-M [label = '@@12']
-N [label = '@@13']
-O [label = '@@14']
-P [label = '@@15']
-Q [label = '@@16']
-R [label = '@@17']
 S [label = '@@18']
-T [label = '@@19']
+}
 
-A -> B; A->D; B->C;B->F; B->G; C->H; H->I; H->J;I->K; I->L; K->M; K->N; M->O; M->P; O->Q; O->R; A->S; H->T
+subgraph cluster_2 {
+  graph[shape = rectangle, fontsize = 28]
+  style = rounded
+  bgcolor = Tomato
+  
+  label = < <font> <b>Consented</b> </font> >
+  node[shape = rectangle, fillcolor = MistyRose, margin = 0.25 ]
+  L [label = '@@11']
+  K [label = '@@10']
+  M [label = '@@12']
+  N [label = '@@13']
+  O [label = '@@14']
+  P [label = '@@15']
+  Q [label = '@@16']
+  R [label = '@@17']
+  
+}
+
+
+
+A -> B; A->D; B->C;B->F; C->H; H->I; H->J;I->K; I->L; K->M; K->N; M->O; M->P; O->Q; O->R; A->S;
 }
 
 #Define Labels
@@ -100,7 +119,6 @@ A -> B; A->D; B->C;B->F; B->G; C->H; H->I; H->J;I->K; I->L; K->M; K->N; M->O; M-
 [3]: paste0('Total Eligible (n = ', Eligible, ')')
 [4]: paste0('Not Interested (n = ', NotInterested, ')')
 [5]: paste0('Total Not Eligible (n = ', NoEligible, ')')
-[6]: paste0('Total Unverified (n = ', Unver, ')')
 [7]: paste0('Intro Call Scheduled (n = ', IntroSched, ')')
 [8]: paste0('Intro Call Complete (n = ', IntroComp, ')')
 [9]: paste0('Not Enrolled (n = ', IntroNoComp, ')')
