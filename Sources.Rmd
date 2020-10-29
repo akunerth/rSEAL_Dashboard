@@ -36,11 +36,23 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}
 #DK Data
-DKdata <- read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_29OCT2020.csv')
+DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_29OCT2020.csv'))
 
 DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
 
 ```
+
+```{r Source Chart,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=10, fig.height=10}
+
+Source1 = table(DKParsedData$rseal_dklog_006)
+
+rownames(Source1) <- c('DHS', 'WIC', 'Facebook', 'Craigslist', 'Staff Member')
+
+kbl(Source1, col.names = c("Referral Sources", "Counts")) %>%
+  kable_styling( bootstrap_options = "striped", full_width = F, position = "left", font_size = 16)
+
+```
+
 
 ```{r Reasons,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=5, fig.height=3}
 
@@ -129,15 +141,4 @@ pie(mytable, labels = lbls, cex=.6,
 
 ```
 
-```{r Source Chart,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=10, fig.height=10}
 
-Source1 = table(DKParsedData$rseal_dklog_016)
-
-Source1 = as.data.frame(Source1)
-names(Source1)[1]=''
-rownames(Source1) <- c('DHS', 'WIC', 'Springfield Library', 'Eugene Library', 'EC Cares', 'Centro')
-
-Source1 %>%
-  kbl(caption = "Sources Frequencies", fontsize = 12) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-```
