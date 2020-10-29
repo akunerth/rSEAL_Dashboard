@@ -2,15 +2,14 @@
 title: "Sources"
 author: 
 date: "Last Updated: 10/29/2020"
-header-includes:
-  - \usepackage{floatrow}
 output: 
   html_document:
     theme: flatly
-    keep_tex: true
 ---
+
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
 
+library(cowplot)
 library(readxl)
 library(knitr)
 library(ggpubr)
@@ -42,17 +41,31 @@ DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete
 
 ```
 
-```{r Source Chart,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=10, fig.height=10}
+```{r Referral Site Chart,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=6, fig.height=6}
 
 Source1 = table(DKParsedData$rseal_dklog_006)
 
 rownames(Source1) <- c('DHS', 'WIC', 'Facebook', 'Craigslist', 'Staff Member')
 
-kbl(Source1, col.names = c("Referral Sources", "Counts")) %>%
-  kable_styling( bootstrap_options = "striped", full_width = F, position = "left", font_size = 16)
+tbl <- kbl(Source1, col.names = c("Referral Sources", "Counts")) %>%
+  kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", font_size = 16)
 
+tbl
 ```
 
+
+```{r Referral Pie Chart,  echo = FALSE, message=FALSE, fig.align = "float_right", fig.width=6, fig.height=6}
+
+# Pie Chart from data frame with Appended Sample Sizes
+slices <- table(DKParsedData$rseal_dklog_006)
+lbls <- c('DHS', 'WIC', 'Facebook', 'Craigslist', 'Staff Member')
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels
+lbls <- paste(lbls,"%",sep="") # ad % to labels
+pie2 <- pie(slices, labels = lbls, 
+   main="Referral Sources\n (with percentages)")
+
+```
 
 ```{r Reasons,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=5, fig.height=3}
 
@@ -130,15 +143,6 @@ A->H; A->I; A->J; A->K
 
 ```
 
-```{r Attempt Status,  echo = FALSE, message=FALSE, fig.align = "left", fig.width=4, fig.height=4}
 
-#Pie Chart of Statuses
-mytable <- table(DKParsedData$rseal_dklog_016)
-lbls <- c("Head Start", "DHS", "WIC", "Springfield Library", "Eugene Library", "EC Cares","Centro","Facebook","Craigslist","Word of Mouth", "Staff Member","Other")
-par(mar=c(2,0,2,2))
-pie(mytable, labels = lbls, cex=.6,
-   main="Sources")
-
-```
 
 
