@@ -1,13 +1,12 @@
 ---
 title: "Consort"
 author: 
-date: "Last Updated: 10/29/2020"
+date: "Last Updated: 11/05/2020"
 output: 
   html_document:
     theme: flatly
 ---
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-
 knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 library(knitr)
@@ -30,20 +29,14 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}
 #DK Data
-
 DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_29OCT2020.csv'))
-
 SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA_29OCT2020.csv'))
-
-
 DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
-
 ```
 
 
 ```{r Consort Diagram, echo = FALSE, message=FALSE}
 #Consort Diagram Assign Variables
-
 TotalContact <-nrow(DKParsedData)
 Interested <- length(which(DKParsedData$rseal_dklog_009==1))
 NotInterested <- length(which(DKParsedData$rseal_dklog_009==0))
@@ -65,11 +58,8 @@ Wave3Comp <- length(which(SubInfo$rseal_subj_027___3==1))
 IntervComp <- sum(SubInfo$rseal_subj_032 != "")
 
 grViz("digraph {
-
 graph[rankdir=TD]
-
 node[shape = rectangle, style = filled, fontsize = 20]
-
 subgraph cluster_1 {
   graph[shape = rectangle, fontsize = 28, face = 'bold']
   style = rounded
@@ -78,16 +68,11 @@ subgraph cluster_1 {
   label = < <font> <b>Pre-Consent</b> </font> >
   node[shape = rectangle, fillcolor = LemonChiffon, margin = 0.25]
   A [label = '@@1']
-B [label = '@@2']
-C [label = '@@3']
-D [label = '@@4', href='./Sources.html']
-F [label = '@@5']
-H [label = '@@7']
-I [label = '@@8']
-J [label = '@@9']
-S [label = '@@18']
+  B [label = '@@2']
+  C [label = '@@3']
+  D [label = '@@4', href='./Sources.html']
+  F [label = '@@5']
 }
-
 subgraph cluster_2 {
   graph[shape = rectangle, fontsize = 28]
   style = rounded
@@ -102,18 +87,17 @@ subgraph cluster_2 {
   O [label = '@@14']
   P [label = '@@15']
   Q [label = '@@16']
-  R [label = '@@17']
-  
+  T [label = '@@9']
 }
-
-
-
-A -> B; A->D; B->C;B->F; C->H; H->I; H->J;I->K; I->L; K->M; K->N; M->O; M->P; O->Q; O->R; A->S;
+A->B; A->D;  
+B->C; B->F;
+C->K;C->T;
+T->L; T->M;
+L->N;L->O;
+N->P; N->Q;
 }
 
 #Define Labels
-
-
 [1]: paste0('Total in DK Log (n = ', TotalContact, ')')
 [2]: paste0('Total Interested (n = ', Interested, ')')
 [3]: paste0('Total Eligible (n = ', Eligible, ')')
@@ -130,8 +114,6 @@ A -> B; A->D; B->C;B->F; C->H; H->I; H->J;I->K; I->L; K->M; K->N; M->O; M->P; O-
 [15]:paste0('Wave 2 Dropout (n = ', Wave2NoComp, ')')
 [16]:paste0('Wave 3 Complete (n = ', Wave3Comp, ')')
 [17]:paste0('Wave 3 Dropout (n = ', Wave3NoComp, ')')
-[18]:paste0('Not Determined (n = ', NotDetermined, ')')
-[19]:paste0('Intro Call Not Verified (n = ', IntroNoVerComp, ')')
 ")
-
 ```
+
