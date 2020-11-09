@@ -29,8 +29,8 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}
 #DK Data
-DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_05NOV2020.csv'))
-SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA_29OCT2020.csv'))
+DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_09NOV2020.csv'))
+SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA_05NOV2020.csv'))
 DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
 ```
 
