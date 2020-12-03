@@ -13,7 +13,7 @@
 
 <title>Consort</title>
 
-<script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -23,12 +23,23 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<script src="site_libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
 <script src="site_libs/viz-1.8.2/viz.js"></script>
 <link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
 <script src="site_libs/grViz-binding-1.0.6.1/grViz.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -316,6 +327,18 @@ $(document).ready(function () {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Original SEAL
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="FamTracker.html">FamTracker</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Initial Findings
      
     <span class="caret"></span>
@@ -357,13 +380,13 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Consort</h1>
 <h4 class="author"></h4>
-<h4 class="date">Last Updated: 11/05/2020</h4>
+<h4 class="date">Last Updated: 12/03/2020</h4>
 
 </div>
 
 
-<div id="htmlwidget-dced913909e2394732a2" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dced913909e2394732a2">{"x":{"diagram":"digraph {\ngraph[rankdir=TD]\nnode[shape = rectangle, style = filled, fontsize = 20]\nsubgraph cluster_1 {\n  graph[shape = rectangle, fontsize = 28, face = \"bold\"]\n  style = rounded\n  bgcolor = Gold\n  \n  label = < <font> <b>Pre-Consent<\/b> <\/font> >\n  node[shape = rectangle, fillcolor = LemonChiffon, margin = 0.25]\n  A [label = \"Total in DK Log (n = 156)\"]\n  B [label = \"Total Interested (n = 80)\"]\n  C [label = \"Total Eligible (n = 55)\"]\n  D [label = \"Not Interested (n = 13)\", href=\"./Sources.html\"]\n  F [label = \"Total Not Eligible (n = 59)\"]\n}\nsubgraph cluster_2 {\n  graph[shape = rectangle, fontsize = 28]\n  style = rounded\n  bgcolor = Tomato\n  \n  label = < <font> <b>Consented<\/b> <\/font> >\n  node[shape = rectangle, fillcolor = MistyRose, margin = 0.25 ]\n  L [label = \"Intervention Complete (n = 3)\"]\n  K [label = \"Wave 1 Assessment Dropout (n = 4)\"]\n  M [label = \"Intervention Dropout (n = 1)\"]\n  N [label = \"Wave 2 Complete (n = 1)\"]\n  O [label = \"Wave 2 Dropout (n = 1)\"]\n  P [label = \"Wave 3 Complete (n = 0)\"]\n  Q [label = \"Wave 3 Dropout (n = 0)\"]\n  T [label = \"Wave 1 Assessment Complete (n = 21)\"]\n}\nA->B; A->D;  \nB->C; B->F;\nC->K;C->T;\nT->L; T->M;\nL->N;L->O;\nN->P; N->Q;\n}\n\n#Define Labels","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-25491f2fac222dea70e8" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-25491f2fac222dea70e8">{"x":{"diagram":"digraph {\ngraph[rankdir=TD]\nnode[shape = rectangle, style = filled, fontsize = 20]\nsubgraph cluster_1 {\n  graph[shape = rectangle, fontsize = 28, face = \"bold\"]\n  style = rounded\n  bgcolor = Gold\n  \n  label = < <font> <b>Pre-Consent<\/b> <\/font> >\n  node[shape = rectangle, fillcolor = LemonChiffon, margin = 0.25]\n  A [label = \"Total in DK Log (n = 158)\"]\n  B [label = \"Total Interested (n = 86)\"]\n  C [label = \"Total Eligible (n = 61)\"]\n  D [label = \"Not Interested (n = 15)\", href=\"./Sources.html\"]\n  F [label = \"Total Not Eligible (n = 84)\"]\n  R [label = \"Not Determined (n = 57)\"]\n}\nsubgraph cluster_2 {\n  graph[shape = rectangle, fontsize = 28]\n  style = rounded\n  bgcolor = Tomato\n  \n  label = < <font> <b>Consented<\/b> <\/font> >\n  node[shape = rectangle, fillcolor = MistyRose, margin = 0.25 ]\n  L [label = \"Wave 1 Assessment Dropout (n = 5)\"]\n  K [label = \"Wave 1 Assessment Complete (n = 24)\"]\n  M [label = \"Intervention Complete (n = 6)\"]\n  N [label = \"Intervention Dropout (n = 0)\"]\n  O [label = \"Wave 2 Complete (n = 3)\"]\n  P [label = \"Wave 2 Dropout (n = 0)\"]\n  Q [label = \"Wave 3 Complete (n = 0)\"]\n  T [label = \"Not Enrolled (n = 20)\"]\n}\nA->B; A->D;A->R \nB->C; B->F;\nC->K;C->T;\nT->L; T->M;\nL->N;L->O;\nN->P; N->Q;\n}\n\n#Define Labels","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -374,7 +397,7 @@ $(document).ready(function () {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

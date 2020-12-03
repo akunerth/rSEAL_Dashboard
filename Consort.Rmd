@@ -1,7 +1,7 @@
 ---
 title: "Consort"
 author: 
-date: "Last Updated: 11/05/2020"
+date: "Last Updated: 12/03/2020"
 output: 
   html_document:
     theme: flatly
@@ -29,18 +29,18 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}
 #DK Data
-DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_09NOV2020.csv'))
-SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA_05NOV2020.csv'))
+DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/DKLog_rSEAL_03DEC2020.csv'))
+SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA_03DEC2020.csv'))
 DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
 ```
 
 
 ```{r Consort Diagram, echo = FALSE, message=FALSE}
 #Consort Diagram Assign Variables
-TotalContact <-nrow(DKParsedData)
+TotalRecruit <-nrow(DKParsedData)
 Interested <- length(which(DKParsedData$rseal_dklog_009==1))
 NotInterested <- length(which(DKParsedData$rseal_dklog_009==0))
-NotDetermined <- sum(is.na(DKParsedData$rseal_dklog_009))
+NotDetermined <- TotalRecruit - (sum(Interested,NotInterested))
 Eligible <- length(which(DKParsedData$rseal_dk_log_complete==2))
 NoEligible <- length(which(DKParsedData$rseal_dk_log_complete==0))
 Unver <- length(which(DKParsedData$rseal_dk_log_complete==1))
@@ -72,6 +72,7 @@ subgraph cluster_1 {
   C [label = '@@3']
   D [label = '@@4', href='./Sources.html']
   F [label = '@@5']
+  R [label = '@@6']
 }
 subgraph cluster_2 {
   graph[shape = rectangle, fontsize = 28]
@@ -89,7 +90,7 @@ subgraph cluster_2 {
   Q [label = '@@16']
   T [label = '@@9']
 }
-A->B; A->D;  
+A->B; A->D;A->R 
 B->C; B->F;
 C->K;C->T;
 T->L; T->M;
@@ -98,11 +99,12 @@ N->P; N->Q;
 }
 
 #Define Labels
-[1]: paste0('Total in DK Log (n = ', TotalContact, ')')
+[1]: paste0('Total in DK Log (n = ', TotalRecruit, ')')
 [2]: paste0('Total Interested (n = ', Interested, ')')
 [3]: paste0('Total Eligible (n = ', Eligible, ')')
 [4]: paste0('Not Interested (n = ', NotInterested, ')')
 [5]: paste0('Total Not Eligible (n = ', NoEligible, ')')
+[6]:paste0('Not Determined (n = ', NotDetermined, ')')
 [7]: paste0('Intro Call Scheduled (n = ', IntroSched, ')')
 [8]: paste0('Intro Call Complete (n = ', IntroComp, ')')
 [9]: paste0('Not Enrolled (n = ', IntroNoComp, ')')
