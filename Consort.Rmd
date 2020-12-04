@@ -58,6 +58,8 @@ IntervComp <- sum(SubInfo$rseal_subj_032 != "")
 Consented <- sum(SubInfo$rseal_subj_002 != "")
 InWave1 <-Consented-Wave1Comp
 NoEnroll <- Eligible-Consented
+NoContact <- sum(SubInfo$rseal_subj_026 != "")
+NoReach <- NotDetermined-NoContact
 
 grViz("digraph {
 graph[rankdir=TD]
@@ -77,6 +79,8 @@ subgraph cluster_1 {
   R [label = '@@6']
   S [label = '@@18']
   T [label = '@@9']
+  U [label = '@@19']
+  V [label = '@@20']
 }
 subgraph cluster_2 {
   graph[shape = rectangle, fontsize = 28]
@@ -93,14 +97,13 @@ subgraph cluster_2 {
   P [label = '@@15']
   Q [label = '@@16']
 }
-A->B; A->D;A->R 
+A->B; A->D;A->R;R->U;R->V;
 B->C; B->F;
 C->T;C->S;
 S->K;
 K->M; S->L;
 M->O;K->N;
 O->Q; M->P;
-
 }
 
 #Define Labels
@@ -122,6 +125,8 @@ O->Q; M->P;
 [16]:paste0('Wave 3 Complete (n = ', Wave3Comp, ')')
 [17]:paste0('Wave 3 Dropout (n = ', Wave3NoComp, ')')
 [18]: paste0('Enrolled (n = ', Consented, ')')
+[19]: paste0('Not Contacted Yet (n = ', NoContact, ')')
+[20]: paste0('Unable to Reach (n = ', NoReach, ')')
 ")
 ```
 
