@@ -1,10 +1,11 @@
 ---
 title: "Sources"
 author: 
-date: "Last Updated: 10/29/2020"
+date: "Last Updated: 12/04/2020"
 output: 
   html_document:
     theme: flatly
+    
 ---
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
@@ -12,6 +13,7 @@ output:
 library(cowplot)
 library(readxl)
 library(knitr)
+library(formattable)
 library(ggpubr)
 library(frequency)
 library(plotly)
@@ -20,6 +22,7 @@ library(kableExtra)
 library(papaja)
 library(kableExtra)
 library(dplyr)
+library(RColorBrewer)
 library(tidyverse)
 library(ggformula)
 library(lubridate)
@@ -41,7 +44,21 @@ DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete
 
 ```
 
-```{r Referral Site Chart,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=6, fig.height=6}
+
+
+```{r, echo=FALSE, fig.width=12, fig.height=4}
+df <- data.frame(Time = DKParsedData$rseal_dklog_010___1, Stressed = DKParsedData$rseal_dklog_010___2, Fit = DKParsedData$rseal_dklog_010___3, Privacy = DKParsedData$rseal_dklog_010___4,Comfort = DKParsedData$rseal_dklog_010___5, Cultural = DKParsedData$rseal_dklog_010___6, Understand = DKParsedData$rseal_dklog_010___7, Staff = DKParsedData$rseal_dklog_010___8, Other = DKParsedData$rseal_dklog_010___9, Unknown = DKParsedData$rseal_dklog_010___0)
+
+Source2 = sapply(df, function(x) length(which(x == 1)))
+coul <- brewer.pal(4, "Set1") 
+coul <- colorRampPalette(coul)(10)
+barplot(Source2, col=coul,
+        ylim=c(0,10),
+        main = "Participant Drop Out Reasons")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.show='hold'}
+par(mfrow = c(1:2))
 
 Source1 = table(DKParsedData$rseal_dklog_006)
 
@@ -53,96 +70,15 @@ tbl <- kbl(Source1, col.names = c("Referral Sources", "Counts")) %>%
 tbl
 ```
 
+```{r, echo=FALSE, fig.width=7, fig.height=4, fig.show='hold', fig.align='center'}
 
-```{r Referral Pie Chart,  echo = FALSE, message=FALSE, fig.align = "float_right", fig.width=6, fig.height=6}
-
-# Pie Chart from data frame with Appended Sample Sizes
 slices <- table(DKParsedData$rseal_dklog_006)
 lbls <- c('Unknown', 'DHS', 'WIC', 'Facebook', 'Craigslist', 'Staff Member')
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) # add percents to labels
 lbls <- paste(lbls,"%",sep="") # ad % to labels
-pie2 <- pie(slices, labels = lbls, 
-   main="Referral Sources\n (with percentages)")
+pie2 <- pie(slices, labels = lbls, radius = 1.0)
 
 ```
-
-```{r Reasons,  echo = FALSE, message=FALSE, fig.align = "right", fig.width=5, fig.height=3}
-
-#Reasons
-TimeCommit <- subset(DKParsedData, DKParsedData$rseal_dklog_010___1 == '1')
-TimeCommit <- nrow(TimeCommit)
-Stressed <- subset(DKParsedData, DKParsedData$rseal_dklog_010___2 == '1')
-Stressed <- nrow(Stressed)
-NotFit <- subset(DKParsedData, DKParsedData$rseal_dklog_010___3 == '1')
-NotFit <- nrow(NotFit)
-Privacy <- subset(DKParsedData, DKParsedData$rseal_dklog_010___4 == '1')
-Privacy <- nrow(Privacy)
-Comfort <- subset(DKParsedData, DKParsedData$rseal_dklog_010___5 == '1')
-Comfort <- nrow(Comfort)
-Cultural <- subset(DKParsedData, DKParsedData$rseal_dklog_010___6 == '1')
-Cultural <- nrow(Cultural)
-Understand <- subset(DKParsedData, DKParsedData$rseal_dklog_010___7 == '1')
-Understand <- nrow(Understand)
-Staff <- subset(DKParsedData, DKParsedData$rseal_dklog_010___8 == '1')
-Staff <- nrow(Staff)
-Other <- subset(DKParsedData, DKParsedData$rseal_dklog_010___9 == '1')
-Other <- nrow(Other)
-Unknown <- subset(DKParsedData, DKParsedData$rseal_dklog_010___0 == '1')
-Unknown <- nrow(Unknown)
-
-#Define Labels
-RZTime <- paste0('Time Commitment (n = ', TimeCommit, ')')
-RZStressed <- paste0('Stressed (n = ', Stressed, ')')
-RZNotFit <- paste0('Not a Fit (n = ', NotFit, ')')
-RZPrivacy <- paste0('Privacy (n = ', Privacy, ')')
-RZComfort <- paste0('Not Comfortable (n = ', Comfort, ')')
-RZCultural <- paste0('Cultural or Language (n = ', Cultural, ')')
-RZUnderstand <- paste0('Do not understand (n = ', Understand, ')')
-RZStaff <- paste0('Do not know staff (n = ', Staff, ')')
-RZOther <- paste0('Other (n = ', Other, ')')
-RZUnknown <- paste0('Unknown (n = ', Unknown, ')')
-Reasons1 = paste(RZTime,RZStressed,RZNotFit,RZPrivacy,RZComfort,RZCultural,RZUnderstand,RZStaff,RZOther,RZUnknown, sep="\n")
-
-grViz("digraph dot{
-
-graph [layout = dot, rankdir = LR]
-
-# node definitions with substituted label text
-node [shape = rectangle, fontname = Helvetica, fixedsize = false, overlap= false, fontname = Helvetica, fontsize = 30]
-A [label = '@@1']
-B [label = '@@2']
-C [label = '@@3']
-D [label = '@@4']
-E [label = '@@5']
-F [label = '@@6']
-G [label = '@@7']
-H [label = '@@8']
-I [label = '@@9']
-J [label = '@@10']
-K [label = '@@11']
-
-#edge statements
-A->B; A->C; A->D; A->E; A->F; A->G;
-A->H; A->I; A->J; A->K
-}
-
-#Define Labels
-[1]: 'Reasons why Not Interested'
-[2]: RZTime
-[3]: RZStressed
-[4]: RZNotFit
-[5]: RZPrivacy
-[6]: RZComfort
-[7]: RZCultural
-[8]: RZUnderstand
-[9]: RZStaff
-[10]: RZOther
-[11]: RZUnknown
-")
-
-```
-
-
 
 
