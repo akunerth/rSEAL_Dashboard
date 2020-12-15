@@ -36,56 +36,6 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 ```
 
 
-
-```{r FamTracker setup, echo = FALSE, message=FALSE}
-#FamTracker Data
-#FamTracker <- read_excel("~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL Pilot/FamTracker.xlsx")
-#FamTrackerRecruitment <- select (FamTracker, RecruitmentSource, flag)
-#FamTrackerRecruitment <- filter(FamTrackerRecruitment, flag == 1)
-#print.data.frame(FamTrackerRecruitment)
-#FamTrackerRecruitment <- as.data.frame(FamTrackerRecruitment)
-#lb <- tribble(
- # ~RecruitmentSource, ~lbs,
-  #1, "Head Start of Lane County",
-  #2, "DHS Mailer",
-  #3, "WIC Program",
-  #4, "Springfield Public Library",
-  #5, "Eugene Public Library",
-  #6, "EC Cares",
-  #7, "Centro Latino Americano",
-  #8, "Facebook",
-  #9, "Craigslist",
-  #10, "Word of Mouth",
-  #11,	"Staff Member",
-  #12,	"Other"
-#)
-#RS <- FamTrackerRecruitment %>% 
-      #group_by(RecruitmentSource) %>% tally()
-#RS <- left_join(RS,lb)
-#print.data.frame(RS)
-#RSlabel <- round(RS$n/sum(RS$n)*100)
-   # lbls <- paste(RS$lbs, RSlabel, "%")
-    #pie(RS$n, labels = lbls, main = "Recruitment Source")
-#FamTrackerDt <- select (FamTracker, RSID, Completed, Dt)
-#print.data.frame(FamTrackerDt)
-#FamTrackerTrans <- dcast(FamTrackerDt, Completed ~ RSID, value.var = #'Dt')
-#print.data.frame(FamTrackerTrans)
-#FamTrackerTrans <- t(FamTrackerTrans)
-#FamTrackerTrans <- as.data.frame(FamTrackerTrans)
-#FamTrackerTrans <- FamTrackerTrans[-1,]
-#names(FamTrackerTrans)<-c("IntroCall","Survey1", "Survey2", "PDR2", "PDR3", "LENA1", "LENA2")
-#datatable(
-    #FamTrackerTrans,
-  #options = list(lengthMenu=list(c(5,15,20),c('5','15','20')),pageLength=50,scrollX=TRUE,scrollCollapse=TRUE,
-                 #initComplete = JS(
-                   #"function(settings, json) {",
-                   #"$(this.api().table().header()).css({'background-color': '#F0F8FF', 'color': '1c1b1b'});",
-                   #"}"),
-                 #columnDefs=list(list(className='dt-center',targets="_all"))
-```
-
-
-
 In this section there will be:
   
   - Number of subjects by condition (Find vs HTP)
