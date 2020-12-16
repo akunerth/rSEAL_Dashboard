@@ -1,5 +1,5 @@
 ---
-title: "rSEAL Dashboard"
+title: rSEAL Dashboard
 author: "Built by: Allison Kunerth and Xiao Cheng"
 date: "Last Updated: 12/15/2020"
 output: 
@@ -15,11 +15,15 @@ knitr::opts_chunk$set(
   message = FALSE)
 ```
 
-```{r, fig.retina=NULL, out.width=100, echo=FALSE}
-knitr::include_graphics("seallogo.jpg")
+```{r, fig.retina = 2, out.width = "500", out.height = "250", fig.align='center', echo=FALSE}
+knitr::include_graphics("SEAL.jpeg")
 ```
 
-## Homepage
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri("/Users/akunerth/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Dashboard/seallogo.jpg"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;width: 128px; height: 128px')
+```
 
-The SEAL study is a federally funded randomized control trial led by Drs. Philip Fisher (PI), Elliot Berkman (Co-I) and Nicole Giuliani (Co-I) at the University of Oregon. This study recruits families eligible for Early Head Start services and aims to (1) quantify main effects of FIND on intervention targets (changes in responsive caregiving) and related caregiver and child outcomes, (2) Use fMRI to identify process-level neural mechanisms underlying FIND intervention effects (i.e., why FIND works) and variations in these effects (i.e., for whom FIND works), and (3) determine moderations of intervention impact including child and caregiver variables and intervention fidelity and dosage. Participants will be randomly assigned to receive FIND coaching or an active control coaching program. Support provided by the National Institute of Child Health and Human Development.
+The SEAL study is a federally funded randomized control trial led by [Drs. Philip Fisher (PI)](https://ctn.uoregon.edu/profile/philf), [Elliot Berkman (Co-I)](https://psychology.uoregon.edu/profile/berkman/) and [Nicole Giuliani (Co-I)](https://education.uoregon.edu/people/faculty/giuliani) at the University of Oregon. This study recruits families eligible for Early Head Start services and aims to (1) quantify main effects of FIND on intervention targets (changes in responsive caregiving) and related caregiver and child outcomes, (2) Use fMRI to identify process-level neural mechanisms underlying FIND intervention effects (i.e., why FIND works) and variations in these effects (i.e., for whom FIND works), and (3) determine moderations of intervention impact including child and caregiver variables and intervention fidelity and dosage. Participants will be randomly assigned to receive FIND coaching or an active control coaching program. Support provided by the [National Institute of Child Health and Human Development](https://www.nichd.nih.gov/).
 
