@@ -5,8 +5,6 @@ date: "Last Updated: 12/15/2020"
 output: 
   html_document:
     theme: flatly
-    toc: True
-    toc_float: True
     
 ---
 
