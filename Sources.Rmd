@@ -8,7 +8,7 @@ output:
     
 ---
 
-```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
+```{r load-packages, echo=FALSE, warning=FALSE, cache=FALSE, include=FALSE}
 
 library(cowplot)
 library(readxl)

@@ -5,7 +5,6 @@ date: "Last Updated: 12/15/2020"
 output: 
   html_document:
     theme: flatly
-    toc: true
 ---
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -32,11 +31,6 @@ library(RColorBrewer)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
-```{r, echo=FALSE}
-htmltools::img(src = knitr::image_uri("/Users/akunerth/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Dashboard/seallogo.jpg"), 
-               alt = 'logo', 
-               style = 'position:absolute; top:0; right:0; padding:10px;width: 128px; height: 128px')
-```
 <style type="text/css">
 .main-container {
   max-width: 1800px;
