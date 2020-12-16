@@ -35,6 +35,7 @@ SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Pro
 DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
 ```
 
+DRAFT - Reworking value assignments/definitions
 
 ```{r Consort Diagram, echo = FALSE, message=FALSE}
 #Consort Diagram Assign Variables
