@@ -21,5 +21,5 @@ knitr::include_graphics("seallogo.jpg")
 
 ## Homepage
 
-This is the homepage for the rSEAL project.
+The SEAL study is a federally funded randomized control trial led by Drs. Philip Fisher (PI), Elliot Berkman (Co-I) and Nicole Giuliani (Co-I) at the University of Oregon. This study recruits families eligible for Early Head Start services and aims to (1) quantify main effects of FIND on intervention targets (changes in responsive caregiving) and related caregiver and child outcomes, (2) Use fMRI to identify process-level neural mechanisms underlying FIND intervention effects (i.e., why FIND works) and variations in these effects (i.e., for whom FIND works), and (3) determine moderations of intervention impact including child and caregiver variables and intervention fidelity and dosage. Participants will be randomly assigned to receive FIND coaching or an active control coaching program. Support provided by the National Institute of Child Health and Human Development.
 

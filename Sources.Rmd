@@ -81,4 +81,3 @@ pie2 <- pie(slices, labels = lbls, radius = 1.0)
 
 ```
 
-
