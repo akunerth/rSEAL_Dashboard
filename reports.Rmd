@@ -118,7 +118,7 @@ ds_summary_long <- codified::table_nih_enrollment(
 #knitr::kable(ds_summary_long, caption = "Counts of Each Subgroup")
 ```
 
-Enrollment Table current as of November 2020. 
+Enrollment Table current as of November 2020. Includes dyads (not just caregivers), and combines the in-person and remote SEAL.
 
 ```{r NIH Table Conform to Cosmetics, echo = FALSE, message=FALSE, warning=FALSE}
 codified::table_nih_enrollment_pretty(
