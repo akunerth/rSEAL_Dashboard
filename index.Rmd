@@ -1,12 +1,12 @@
 ---
-title: rSEAL Dashboard
+title: "rSEAL Dashboard"
 author: "Built by: Allison Kunerth and Xiao Cheng"
 date: "Last Updated: 12/15/2020"
 output: 
   html_document:
     theme: flatly
-    toc: TRUE
-    toc_float: TRUE
+    toc: True
+    toc_float: True
 ---
 ```{r setup, include = FALSE, cache = FALSE}
 knitr::opts_chunk$set(

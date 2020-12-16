@@ -36,6 +36,12 @@ knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri("/Users/akunerth/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Dashboard/seallogo.jpg"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;width: 128px; height: 128px')
+```
+
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}
 #DK Data
 DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/RSEALDKLog_DATA.csv'))
