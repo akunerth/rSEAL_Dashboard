@@ -10,6 +10,13 @@ output:
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
 
+library(magrittr)
+library(codified)
+library(rlang)
+library(tibble)
+library(tidyr)
+library(checkmate)
+library(testthat)
 library(cowplot)
 library(readxl)
 library(knitr)
@@ -37,11 +44,87 @@ knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
-```{r DK Log variable setup, echo = FALSE, message=FALSE}
-#DK Data
-DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/RSEALDKLog_DATA.csv'))
-
-DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
+```{r DK Log variable setup, echo = FALSE, warning=FALSE, message=FALSE}
+#Enrollment Data
+Enrollment <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/Data Management/Enrollment_Table/Enrollment_Table15DEC2020_Rversion.csv'))
 
 ```
 
+```{r NIH Table, echo = FALSE, message=FALSE, warning=FALSE,}
+
+library(magrittr)
+path <- system.file("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/Data Management/Enrollment_Table/Enrollment_Table15DEC2020_Rversion.csv", package="codified")
+col_types <- readr::cols_only(
+  record_id = readr::col_integer(),
+  name_last = readr::col_character(),
+  dob       = readr::col_date(format = ""),
+  gender    = readr::col_integer(),
+  race      = readr::col_integer(),
+  ethnicity = readr::col_integer()
+)
+ds <- readr::read_csv("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/Data Management/Enrollment_Table/Enrollment_Table15DEC2020_Rversion.csv") %>%
+  dplyr::mutate(
+    gender     = as.character(gender),
+    race       = as.character(race),
+    ethnicity  = as.character(ethnicity)
+  )
+#ds %>% 
+  #head(10) %>% 
+  #knitr::kable(caption = "Observed Dataset (first ten rows)")
+```
+
+```{r NIH Table Gender Mapping, echo = FALSE, message=FALSE, warning=FALSE,}
+ds_lu_gender <- tibble::tribble(
+  ~input,   ~displayed            ,
+  "0"   ,  "Female"               , 
+  "1"   ,  "Male"                 ,
+  "U"   ,  "Unknown/Not Reported"
+)
+#knitr::kable(ds_lu_gender, caption = "Gender Mapping")
+```
+
+```{r NIH Table Race Mapping, echo = FALSE, message=FALSE, warning=FALSE,}
+ds_lu_race <- tibble::tribble(
+  ~input , ~displayed                                   ,
+  "1"    , "American Indian/Alaska Native"              ,
+  "2"    , "Asian"                                      ,
+  "3"    , "Native Hawaiian or Other Pacific Islander"  ,
+  "4"    , "Black or African American"                  ,
+  "5"    , "White"                                      ,
+  "M"    , "More than One Race"                         ,
+  "6"    , "Unknown or Not Reported"
+)
+#knitr::kable(ds_lu_race, caption = "Race Mapping")
+```
+
+```{r NIH Table Ethnicity Mapping, echo = FALSE, message=FALSE, warning=FALSE,}
+ds_lu_ethnicity <- tibble::tribble(
+  ~input,   ~displayed                      ,
+  "2"   ,  "Not Hispanic or Latino"         ,
+  "1"   ,  "Hispanic or Latino"             ,
+  "0"   ,  "Unknown/Not Reported Ethnicity"
+)
+#knitr::kable(ds_lu_ethnicity, caption = "Ethnicity Mapping")
+```
+
+```{r NIH Table Mapped to Observed, echo = FALSE, message=FALSE, warning=FALSE,}
+ds_summary_long <- codified::table_nih_enrollment(
+  d              = ds,
+  d_lu_gender    = ds_lu_gender,
+  d_lu_race      = ds_lu_race,
+  d_lu_ethnicity = ds_lu_ethnicity
+)
+
+#knitr::kable(ds_summary_long, caption = "Counts of Each Subgroup")
+```
+
+Enrollment Table current as of November 2020. 
+
+```{r NIH Table Conform to Cosmetics, echo = FALSE, message=FALSE, warning=FALSE}
+codified::table_nih_enrollment_pretty(
+  d              = ds,
+  d_lu_gender    = ds_lu_gender,
+  d_lu_race      = ds_lu_race,
+  d_lu_ethnicity = ds_lu_ethnicity
+)
+```
