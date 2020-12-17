@@ -5,6 +5,7 @@ date: "Last Updated: 12/15/2020"
 output: 
   html_document:
     theme: flatly
+    css: columns.css
 ---
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
@@ -34,19 +35,24 @@ library(ggformula)
 library(lubridate)
 library(plyr)
 library(RColorBrewer)
+library(ggplot2)
 library(DiagrammeR)
 library(DiagrammeRsvg)
 library(rsvg)
 library(reshape2)
+library(skimr)
 library(here)
 knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
 
-```{r DK Log variable setup, echo = FALSE, warning=FALSE, message=FALSE}
+```{r Read in Files, echo = FALSE, warning=FALSE, message=FALSE}
 #Enrollment Data
 Enrollment <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/Data Management/Enrollment_Table/Enrollment_Table15DEC2020_Rversion.csv'))
+
+#SEAL Numbers Data
+Numbers <- data.frame(read_xlsx('/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/Data Management/Enrollment_Table/SEAL_Numbers_16DEC2020.xlsx','Current_Data'))
 
 ```
 
@@ -128,3 +134,43 @@ codified::table_nih_enrollment_pretty(
   d_lu_ethnicity = ds_lu_ethnicity
 )
 ```
+
+<center>
+**Counts of dyads for both remote and in-person SEAL.** 
+<center>
+
+
+
+
+:::: {style="display: flex;"}
+
+::: {}
+```{r SEAL Numbers, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+Condition <- as.numeric(as.character(Numbers$Condition))
+
+Conditions <- Numbers %>%
+  dplyr::group_by(Condition, Consent_YR) %>%
+  dplyr::summarize(Count = n())
+
+  kable(Conditions,
+        col.names = c("Condition","Year","Count")) %>%
+        kable_minimal()
+
+```
+:::
+
+::: {}
+```{r SEAL Numbers Plot, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+ConditionsPlot <- ggplot(Conditions, aes(x = Consent_YR, y = Count, fill = Condition)) +
+  geom_col() +
+  facet_wrap(~Condition)
+
+ConditionsPlot + labs(x = "Year")
+```
+:::
+
+::::
