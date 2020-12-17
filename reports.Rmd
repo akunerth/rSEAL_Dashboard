@@ -56,6 +56,46 @@ Numbers <- data.frame(read_xlsx('/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/
 
 ```
 
+
+<center>
+**Counts of dyads for both remote and in-person SEAL through November 2020.** 
+<center>
+
+
+
+
+:::: {style="display: flex;"}
+
+::: {}
+```{r SEAL Numbers, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+Condition <- as.numeric(as.character(Numbers$Condition))
+
+Conditions <- Numbers %>%
+  dplyr::group_by(Condition, Consent_YR) %>%
+  dplyr::summarize(Count = n())
+
+  kable(Conditions,
+        col.names = c("Condition","Year","Count")) %>%
+        kable_minimal()
+
+```
+:::
+
+::: {}
+```{r SEAL Numbers Plot, echo = FALSE, fig.width=5, fig.height=4,, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+ConditionsPlot <- ggplot(Conditions, aes(x = Consent_YR, y = Count, fill = Condition)) +
+  geom_col() +
+  facet_wrap(~Condition)
+
+ConditionsPlot + labs(x = "Year")
+```
+:::
+
+::::
 ```{r NIH Table, echo = FALSE, message=FALSE, warning=FALSE,}
 
 library(magrittr)
@@ -134,43 +174,3 @@ codified::table_nih_enrollment_pretty(
   d_lu_ethnicity = ds_lu_ethnicity
 )
 ```
-
-<center>
-**Counts of dyads for both remote and in-person SEAL.** 
-<center>
-
-
-
-
-:::: {style="display: flex;"}
-
-::: {}
-```{r SEAL Numbers, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
-par(mar = c(4, 4, .2, .1))
-
-Condition <- as.numeric(as.character(Numbers$Condition))
-
-Conditions <- Numbers %>%
-  dplyr::group_by(Condition, Consent_YR) %>%
-  dplyr::summarize(Count = n())
-
-  kable(Conditions,
-        col.names = c("Condition","Year","Count")) %>%
-        kable_minimal()
-
-```
-:::
-
-::: {}
-```{r SEAL Numbers Plot, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
-par(mar = c(4, 4, .2, .1))
-
-ConditionsPlot <- ggplot(Conditions, aes(x = Consent_YR, y = Count, fill = Condition)) +
-  geom_col() +
-  facet_wrap(~Condition)
-
-ConditionsPlot + labs(x = "Year")
-```
-:::
-
-::::
