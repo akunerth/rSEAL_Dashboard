@@ -61,13 +61,10 @@ Numbers <- data.frame(read_xlsx('/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/
 **Counts of dyads for both remote and in-person SEAL through November 2020.** 
 <center>
 
-
-
-
 :::: {style="display: flex;"}
 
 ::: {}
-```{r SEAL Numbers, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+```{r SEAL Conditions Count, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 
 Condition <- as.numeric(as.character(Numbers$Condition))
@@ -84,12 +81,51 @@ Conditions <- Numbers %>%
 :::
 
 ::: {}
-```{r SEAL Numbers Plot, echo = FALSE, fig.width=5, fig.height=4,, message=FALSE, warning=FALSE}
+```{r SEAL Conditions Plot, echo = FALSE, fig.width=5, fig.height=4,, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 
 ConditionsPlot <- ggplot(Conditions, aes(x = Consent_YR, y = Count, fill = Condition)) +
   geom_col() +
   facet_wrap(~Condition)
+
+ConditionsPlot + labs(x = "Year")
+```
+:::
+
+::::
+
+<center>
+**Counts of Intervention Start Dates for SEAL through November 2020.** 
+<center>
+
+:::: {style="display: flex;"}
+
+::: {}
+
+```{r SEAL Interventions Count, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+Condition <- as.numeric(as.character(Numbers$Condition))
+
+IntvStart <- Numbers %>%
+  dplyr::group_by(Condition, IntvStartMonth) %>%
+  dplyr::summarize(Count = n())
+
+  kable(IntvStart,
+        col.names = c("Condition","Month/Year","Count")) %>%
+        kable_minimal()
+
+```
+:::
+
+::: {}
+```{r SEAL Interventions Plot, echo = FALSE, fig.width=5, fig.height=4,, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+ConditionsPlot <- ggplot(IntvStart, aes(x = IntvStartMonth, y = Count, fill = Condition)) +
+  geom_col() +
+  facet_wrap(~Condition)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1))
 
 ConditionsPlot + labs(x = "Year")
 ```
