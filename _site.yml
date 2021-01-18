@@ -4,6 +4,8 @@ navbar:
   left:
     - text: "Snapshot"
       menu:
+      - text: "Enrollment"
+        href: enrollment.html
       - text: "Reports"
         href: reports.html
       - text: "Consort"
