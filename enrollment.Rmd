@@ -56,16 +56,10 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 #Read in Masterfile
 masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/masterfile.sav'))
 
-  
-
-#Create Frequency Table with completion Variables
-
-Enrollment <- masterfile %>% select(RSID, Survey1Start, Survey2Start, PDR2Start, PDR3Start, rSEAL.C1.LDL.003, rSEAL.C1.LDL.029,Survey3Start, Survey4Start, PDR5Start, PDR6Start, rSEAL.C2.LDL.003, rSEAL.C2.LDL.029)
-
-Enrollment$rSEAL.C1.LDL.003[Enrollment$rSEAL.C1.LDL.003 == ""] <- NA
-Enrollment$rSEAL.C1.LDL.029[Enrollment$rSEAL.C1.LDL.029 == ""] <- NA
-Enrollment$rSEAL.C2.LDL.003[Enrollment$rSEAL.C2.LDL.003 == ""] <- NA
-Enrollment$rSEAL.C2.LDL.029[Enrollment$rSEAL.C2.LDL.029 == ""] <- NA
+masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
+masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
+masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
+masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
 
 ```
 
@@ -100,22 +94,22 @@ par(mar = c(4, 4, .2, .1))
 
 # Format dates
 
-Enrollment$Survey1Start <- as.Date(Enrollment$Survey1Start, "%Y/%m/%d")
-Enrollment$Survey2Start <- as.Date(Enrollment$Survey2Start, "%Y/%m/%d")
-Enrollment$PDR2Start <- as.Date(Enrollment$PDR2Start, "%Y/%m/%d")
-Enrollment$PDR3Start <- as.Date(Enrollment$PDR3Start, "%Y/%m/%d")
-#Enrollment$rSEAL.C1.LDL.003 <- as.Date(Enrollment$rSEAL.C1.LDL.003, "%Y/%m/%d")
-#Enrollment$rSEAL.C1.LDL.029 <- as.Date(Enrollment$rSEAL.C1.LDL.029, "%Y/%m/%d")
+masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
+masterfile$Survey2Start <- as.Date(masterfile$Survey2Start, "%Y/%m/%d")
+masterfile$PDR2Start <- as.Date(masterfile$PDR2Start, "%Y/%m/%d")
+masterfile$PDR3Start <- as.Date(masterfile$PDR3Start, "%Y/%m/%d")
+#masterfile$rSEAL.C1.LDL.003 <- as.Date(masterfile$rSEAL.C1.LDL.003, "%Y/%m/%d")
+#masterfile$rSEAL.C1.LDL.029 <- as.Date(masterfile$rSEAL.C1.LDL.029, "%Y/%m/%d")
 
 #Classify Tests
-Survey1Completion <- Enrollment$Survey1Completion <- ifelse(Enrollment$Survey1Start > "2020-07-01", "Complete", "Incomplete")
-Survey2Completion <- Enrollment$Survey2Completion <- ifelse(Enrollment$Survey2Start > "2020-07-01", "Complete", "Incomplete")
-PDR2Completion <- Enrollment$PDR2Completion <- ifelse(Enrollment$PDR2Start > "2020-07-01", "Complete", "Incomplete")
-PDR3Completion <- Enrollment$PDR3Completion<- ifelse(Enrollment$PDR3Start > "2020-07-01", "Complete", "Incomplete")
-LENAD1DiaryCompletion <- Enrollment$LENAD1DiaryCompletion <- ifelse(Enrollment$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD2DiaryCompletion <- Enrollment$LENAD2DiaryCompletion<- ifelse(Enrollment$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
+Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
+PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
+PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
+LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
 
-Wave1_Progression <- Enrollment %>%
+Wave1_Progression <- masterfile %>%
   dplyr::mutate(month = format(Survey1Start, "%m")) %>%
   dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion) %>%
   dplyr::summarize(Count = n())
@@ -130,28 +124,28 @@ Wave1_Progression <- Enrollment %>%
 par(mar = c(4, 4, .2, .1))
 
 #Counts of Variables
-Survey1Start <- as.character(Enrollment$Survey1Start)
-Survey1Delinquent <- sum(is.na(Enrollment$Survey1Start))
+Survey1Start <- as.character(masterfile$Survey1Start)
+Survey1Delinquent <- sum(is.na(masterfile$Survey1Start))
 Survey1Complete <- length(Survey1Start) - Survey1Delinquent
 
-Survey2Start <- as.character(Enrollment$Survey2Start)
-Survey2Delinquent <- sum(is.na(Enrollment$Survey2Start))
+Survey2Start <- as.character(masterfile$Survey2Start)
+Survey2Delinquent <- sum(is.na(masterfile$Survey2Start))
 Survey2Complete <- length(Survey2Start) - Survey2Delinquent
 
-PDR2Start <- as.character(Enrollment$PDR2Start)
-PDR2Delinquent <- sum(is.na(Enrollment$PDR2Start))
+PDR2Start <- as.character(masterfile$PDR2Start)
+PDR2Delinquent <- sum(is.na(masterfile$PDR2Start))
 PDR2Complete <- length(PDR2Start) - Survey2Delinquent
 
-PDR3Start <- as.character(Enrollment$PDR3Start)
-PDR3Delinquent <- sum(is.na(Enrollment$PDR3Start))
+PDR3Start <- as.character(masterfile$PDR3Start)
+PDR3Delinquent <- sum(is.na(masterfile$PDR3Start))
 PDR3Complete <- length(PDR3Start) - PDR3Delinquent
 
-LENAD1Start <- as.character(Enrollment$rSEAL.C1.LDL.003)
-LENAD1Delinquent <- sum(is.na(Enrollment$rSEAL.C1.LDL.003))
+LENAD1Start <- as.character(masterfile$rSEAL.C1.LDL.003)
+LENAD1Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.003))
 LENAD1Complete <- length(LENAD1Start) - LENAD1Delinquent
 
-LENAD2Start <- as.character(Enrollment$rSEAL.C1.LDL.029)
-LENAD2Delinquent <- sum(is.na(Enrollment$rSEAL.C1.LDL.029))
+LENAD2Start <- as.character(masterfile$rSEAL.C1.LDL.029)
+LENAD2Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.029))
 LENAD2Complete <- length(LENAD2Start) - LENAD2Delinquent
 
 
@@ -164,8 +158,6 @@ data <- data.frame(
 tbl <- kbl(data, col.names = c("Wave1","Counts")) %>%
   kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", font_size = 16)
 tbl
-
-
 ```
 :::
 

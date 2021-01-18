@@ -9,24 +9,44 @@ output:
     toc_float: True
 ---
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+library(magrittr)
+library(codified)
+library(rlang)
+library(epiDisplay)
+library(tibble)
+library(tidyr)
+library(checkmate)
+library(testthat)
+library(cowplot)
 library(readxl)
 library(knitr)
+library(formattable)
 library(ggpubr)
+library(frequency)
 library(plotly)
 library(emmeans)
+library(kableExtra)
 library(papaja)
 library(kableExtra)
 library(dplyr)
+library(RColorBrewer)
 library(tidyverse)
 library(ggformula)
 library(lubridate)
 library(plyr)
+library(readr)
+library(dplyr)
+library(haven)
 library(RColorBrewer)
+library(ggplot2)
 library(DiagrammeR)
 library(DiagrammeRsvg)
 library(rsvg)
+library(reshape2)
+library(skimr)
 library(here)
+knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
@@ -40,7 +60,7 @@ htmltools::img(src = knitr::image_uri("/Users/akunerth/Dropbox (University of Or
 #DK Data
 DKdata <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/DK_Log/Raw_Data/RSEALDKLog_DATA.csv'))
 SubInfo <- data.frame(read.csv(file = '/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/PreStudy/Subject_Database/Raw_Data/RSEALSubjectDatabase_DATA.csv'))
-DKParsedData <- select (DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
+DKParsedData <- select(DKdata, rseal_dkid,rseal_dklog_006:rseal_dk_log_complete )
 ```
 
 DRAFT - Reworking value assignments/definitions
