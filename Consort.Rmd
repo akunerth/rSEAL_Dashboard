@@ -6,7 +6,6 @@ output:
   html_document:
     theme: flatly
     toc: True
-    toc_float: True
 ---
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
 
@@ -48,12 +47,6 @@ library(skimr)
 library(here)
 knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
-```
-
-```{r, echo=FALSE}
-htmltools::img(src = knitr::image_uri("/Users/akunerth/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Dashboard/seallogo.jpg"), 
-               alt = 'logo', 
-               style = 'position:absolute; top:0; right:0; padding:10px;width: 128px; height: 128px')
 ```
 
 ```{r DK Log variable setup, echo = FALSE, message=FALSE}

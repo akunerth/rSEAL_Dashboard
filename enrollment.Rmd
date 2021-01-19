@@ -235,7 +235,7 @@ Enrollment8$Instrument <- factor(Enrollment8$Instrument, levels = c("Surv1Status
 p <- ggplot(data = Enrollment8, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary")) +
 scale_fill_discrete(labels = c("Complete", "Delinquent")) #Manually assigns colors
-p <- p + xlab("Instrument") + ggtitle("Wave 1 Statuses") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
+p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
 
