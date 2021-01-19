@@ -5,7 +5,7 @@ date: "Last Updated: 6/20/2020"
 output: 
   html_document:
     theme: flatly
-    toc: TRUE
+    toc: TRUE 
 ---
 
 ```{r setup, include = FALSE, cache = FALSE}

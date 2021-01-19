@@ -5,6 +5,7 @@ date: "Last Updated: 12/16/2020"
 output: 
   html_document:
     theme: flatly
+    toc: TRUE
     css: columns.css
 ---
 

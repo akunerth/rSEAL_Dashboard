@@ -52,7 +52,7 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 
 
 ```{r Read in Files and set-up columns, echo = FALSE, warning=FALSE, message=FALSE}
-#Read in Masterfile
+#Read Masterfile
 library(haven)
 masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/masterfile.sav'))
 
@@ -152,7 +152,7 @@ tbl <- kbl(data, col.names = c("Wave1","Counts")) %>%
 ```
 <center>
 **Wave 1 Participant Progression **  
-This chart shows the number of participants complete with each survey instrumen across Wave 1. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.   
+This chart shows the number of participants complete with each survey instrument across Wave 1. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.   
 <center>
 ::: {}
 ```{r SEAL Wave 1 Progression, echo = FALSE, fig.width=10, fig.height=4, message=FALSE, warning=FALSE}
