@@ -20,9 +20,6 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -266,69 +263,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -336,16 +270,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -456,16 +380,16 @@ div.tocify {
 
 <h1 class="title toc-ignore">Current Enrollment</h1>
 <h4 class="author"></h4>
-<h4 class="date">Last Updated: 1/17/2021</h4>
+<h4 class="date">Last Updated: 1/18/2021</h4>
 
 </div>
 
 
 <center>
-<strong>Wave 1 Participant Completion </strong>
+<strong>Wave 1 Participant Completion </strong><br />
+This chart shows the combination of completions for the dyads across Wave 1.<br />
+
 <center>
-<div style="display: flex;">
-<div>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -696,69 +620,13 @@ Complete
 </tr>
 </tbody>
 </table>
-<table class="table table-striped" style="font-size: 16px; width: auto !important; float: left; margin-right: 10px;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Wave1
-</th>
-<th style="text-align:right;">
-Counts
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Survey 1
-</td>
-<td style="text-align:right;">
-37
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Survey 2
-</td>
-<td style="text-align:right;">
-36
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PDR 2
-</td>
-<td style="text-align:right;">
-36
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PDR 3
-</td>
-<td style="text-align:right;">
-27
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LENA Day 1 Diary
-</td>
-<td style="text-align:right;">
-18
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LENA Day 2 Diary
-</td>
-<td style="text-align:right;">
-18
-</td>
-</tr>
-</tbody>
-</table>
-<img src="enrollment_files/figure-html/SEAL%20New%20DataFrame-1.png" width="480" />
+<center>
+<strong>Wave 1 Participant Progression </strong><br />
+This chart shows the number of participants complete with each survey instrumen across Wave 1. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.<br />
+
+<center>
+<div>
+<p><img src="enrollment_files/figure-html/SEAL%20Wave%201%20Progression-1.png" width="960" /></p>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -775,51 +643,7 @@ Delinquent
 <tbody>
 <tr>
 <td style="text-align:left;">
-LENAD1DiaryStatus
-</td>
-<td style="text-align:right;">
-18
-</td>
-<td style="text-align:right;">
-21
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LENAD2DiaryStatus
-</td>
-<td style="text-align:right;">
-18
-</td>
-<td style="text-align:right;">
-21
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PDR2Status
-</td>
-<td style="text-align:right;">
-31
-</td>
-<td style="text-align:right;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PDR3Status
-</td>
-<td style="text-align:right;">
-27
-</td>
-<td style="text-align:right;">
-12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Surv1Status
+Survey 1
 </td>
 <td style="text-align:right;">
 37
@@ -830,7 +654,7 @@ Surv1Status
 </tr>
 <tr>
 <td style="text-align:left;">
-Surv2Status
+Survey 2
 </td>
 <td style="text-align:right;">
 36
@@ -839,15 +663,56 @@ Surv2Status
 3
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+PDR 2
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PDR 3
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LENA Day 1 Diary
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LENA Day 2 Diary
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+21
+</td>
+</tr>
 </tbody>
 </table>
 </div>
-</div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -880,32 +745,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

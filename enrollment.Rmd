@@ -1,12 +1,11 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 1/17/2021"
+date: "Last Updated: 1/18/2021"
 output: 
   html_document:
     theme: flatly
     toc: TRUE
-    toc_float: TRUE
 ---
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
@@ -77,30 +76,9 @@ Enrollment <- data.frame("RSID" = masterfile$RSID,
 
 
 <center>
-**Wave 1 Participant Completion ** 
+**Wave 1 Participant Completion **  
+This chart shows the combination of completions for the dyads across Wave 1.  
 <center>
-
-:::: {style="display: flex;"}
-
-::: {}
-
-```{r SEAL Enrollment Counts, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
-#par(mar = c(4, 4, .2, .1))
-
-#library(lubridate)
-#Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d %H:%M:%S")
-#Survey2Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d %H:%M:%S")
-
-#Complete <- masterfile %>%
-  #dplyr::mutate(month = format(Survey1Start, "%m")) %>%
-  #dplyr::group_by(month) %>%
-  #dplyr::summarize(Count = n())
- 
-  #kable(Complete,
-        #col.names = c("Month","Count")) %>%
-        #kable_minimal()
-
-```
 
 ```{r SEAL Wave Progression, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
@@ -170,10 +148,14 @@ data <- data.frame(
 
 tbl <- kbl(data, col.names = c("Wave1","Counts")) %>%
   kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", font_size = 16)
-tbl
-```
 
-```{r SEAL New DataFrame, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+```
+<center>
+**Wave 1 Participant Progression **  
+This chart shows the number of participants complete with each survey instrumen across Wave 1. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.   
+<center>
+::: {}
+```{r SEAL Wave 1 Progression, echo = FALSE, fig.width=10, fig.height=4, message=FALSE, warning=FALSE}
 
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- Sys.time()
@@ -247,25 +229,30 @@ Enrollment7 <- Enrollment6%>%
      )
 Enrollment8 <- gather(Enrollment7, "Instrument", "Status", 10:15)
 
-Wave1 <- table(Enrollment8$Instrument, Enrollment8$Status, dnn=c("Instrument", "Status"))
-
-library(kableExtra)
-Wave1Counts <- kable(Wave1,
-        col.names = c("Complete","Delinquent")) %>%
-        kable_minimal()
-
 library(ggplot2) #load ggplot2 library
 Enrollment8$Cases <- factor(Enrollment8$RSID) # Create a categorical variable
 Enrollment8$Instrument <- factor(Enrollment8$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus")) # Create categorical variable
 p <- ggplot(data = Enrollment8, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary")) +
 scale_fill_discrete(labels = c("Complete", "Delinquent")) #Manually assigns colors
-p <- p + xlab("Instrument") + ggtitle("Wave 1 Statuses") + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + labs(fill = "Statuses") 
+p <- p + xlab("Instrument") + ggtitle("Wave 1 Statuses") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
+
+
+```
+
+```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+Wave1 <- table(Enrollment8$Instrument, Enrollment8$Status, dnn=c("Instrument", "Status"))
+
+library(kableExtra)
+rownames(Wave1) = c("Survey 1","Survey 2", "PDR 2", "PDR 3", "LENA Day 1 Diary", "LENA Day 2   Diary")
+Wave1Counts <- kable(Wave1,
+        col.names = c("Complete","Delinquent")) %>%
+        kable_minimal()
 
 Wave1Counts
 ```
 :::
 
-::::
+
