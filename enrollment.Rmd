@@ -67,7 +67,11 @@ masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
 Enrollment <- data.frame("RSID" = masterfile$RSID,
                         "SubInfoActual"=masterfile$SubInfoStart,
                          "Survey1Actual"=masterfile$Survey1Start,
-                         "Survey2Actual"=masterfile$Survey2Start)
+                         "Survey2Actual"=masterfile$Survey2Start,
+                         "PDR2Actual"=masterfile$PDR2Start,
+                         "PDR3Actual"=masterfile$PDR3Start,
+                         "LENAD1DiaryActual"=masterfile$rSEAL.C1.LDL.003,
+                         "LENAD2DiaryActual"=masterfile$rSEAL.C1.LDL.029)
 
 ```
 
@@ -181,7 +185,7 @@ Enrollment2 <- Enrollment %>%
       mutate(
       Surv1Status = case_when(
       Test > 14 & is.na(Survey1Actual) ~ "Delinquent",
-      Test < 7 & is.na(Survey1Actual) ~ "Green",
+      Test < 7 & is.na(Survey1Actual) ~ "On-Track",
       Survey1Actual > start       ~ "Complete",
       TRUE                      ~ "Yellow"
       )
@@ -192,31 +196,75 @@ Enrollment3 <- Enrollment2%>%
       mutate(
       Surv2Status = case_when(
       Test > 14 & is.na(Survey2Actual) ~ "Delinquent",
-      Test < 7 & is.na(Survey2Actual) ~ "Green",
+      Test < 7 & is.na(Survey2Actual) ~ "On-Track",
       Survey2Actual > start       ~ "Complete",
       TRUE                      ~ "Yellow"
       )
      )
 
-Enrollment4 <- gather(Enrollment3, "Instrument", "Status", 6:7)
+Enrollment4 <- Enrollment3%>%
+      select(RSID:Surv2Status) %>%
+      mutate(
+      PDR2Status = case_when(
+      Test > 14 & is.na(PDR2Actual) ~ "Delinquent",
+      Test < 7 & is.na(PDR2Actual) ~ "On-Track",
+      PDR2Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
 
-Wave1 <- table(Enrollment4$Instrument, Enrollment4$Status, dnn=c("Instrument", "Status"))
+Enrollment5 <- Enrollment4%>%
+      select(RSID:PDR2Status) %>%
+      mutate(
+      PDR3Status = case_when(
+      Test > 14 & is.na(PDR3Actual) ~ "Delinquent",
+      Test < 7 & is.na(PDR3Actual) ~ "On-Track",
+      PDR3Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment6 <- Enrollment5%>%
+      select(RSID:PDR3Status) %>%
+      mutate(
+      LENAD1DiaryStatus = case_when(
+      Test > 14 & is.na(LENAD1DiaryActual) ~ "Delinquent",
+      Test < 7 & is.na(LENAD1DiaryActual) ~ "On-Track",
+      LENAD1DiaryActual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment7 <- Enrollment6%>%
+      select(RSID:LENAD1DiaryStatus) %>%
+      mutate(
+      LENAD2DiaryStatus = case_when(
+      Test > 14 & is.na(LENAD2DiaryActual) ~ "Delinquent",
+      Test < 7 & is.na(LENAD2DiaryActual) ~ "On-Track",
+      LENAD2DiaryActual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+Enrollment8 <- gather(Enrollment7, "Instrument", "Status", 10:15)
+
+Wave1 <- table(Enrollment8$Instrument, Enrollment8$Status, dnn=c("Instrument", "Status"))
 
 library(kableExtra)
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Delinquent")) %>%
         kable_minimal()
-Wave1Counts
 
 library(ggplot2) #load ggplot2 library
-Enrollment4$Cases <- factor(Enrollment4$RSID) # Create a categorical variable
-Enrollment4$Instrument <- factor(Enrollment4$Instrument) # Create categorical variable
-p <- ggplot(data = Enrollment4, aes(x=Enrollment4$Instrument, fill=Enrollment4$Status) ) + geom_bar() + # Creates stacked bar chart
-scale_x_discrete(labels=c("Survey 1", "Survey 2")) +
+Enrollment8$Cases <- factor(Enrollment8$RSID) # Create a categorical variable
+Enrollment8$Instrument <- factor(Enrollment8$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus")) # Create categorical variable
+p <- ggplot(data = Enrollment8, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
+scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary")) +
 scale_fill_discrete(labels = c("Complete", "Delinquent")) #Manually assigns colors
-p <- p + xlab("Instrument") + ggtitle("Wave 1 Statuses") + labs(fill = "Statuses") # Adds title and labels
+p <- p + xlab("Instrument") + ggtitle("Wave 1 Statuses") + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + labs(fill = "Statuses") 
+ # Adds title and labels
 p
 
+Wave1Counts
 ```
 :::
 
