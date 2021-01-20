@@ -1,7 +1,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 1/18/2021"
+date: "Last Updated: 1/20/2021"
 output: 
   html_document:
     theme: flatly
