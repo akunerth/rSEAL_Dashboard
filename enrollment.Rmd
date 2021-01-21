@@ -1,3 +1,4 @@
+
 ---
 title: "Current Enrollment"
 author: 
@@ -9,7 +10,6 @@ output:
 ---
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-
 library(magrittr)
 library(codified)
 library(rlang)
@@ -60,7 +60,6 @@ masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
 masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
 masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
-
 #Create new DataFrame for Enrollment Table
 
 Enrollment <- data.frame("RSID" = masterfile$RSID,
@@ -70,27 +69,37 @@ Enrollment <- data.frame("RSID" = masterfile$RSID,
                          "PDR2Actual"=masterfile$PDR2Start,
                          "PDR3Actual"=masterfile$PDR3Start,
                          "LENAD1DiaryActual"=masterfile$rSEAL.C1.LDL.003,
-                         "LENAD2DiaryActual"=masterfile$rSEAL.C1.LDL.029)
+                         "LENAD2DiaryActual"=masterfile$rSEAL.C1.LDL.029,
+                         "Survey3Actual"=masterfile$Survey3Start,
+                         "Survey4Actual"=masterfile$Survey4Start,
+                         "PDR5Actual"=masterfile$PDR5Start,
+                         "PDR6Actual"=masterfile$PDR6Start,
+                         "LENAD3DiaryActual"=masterfile$rSEAL.C2.LDL.003,
+                         "LENAD4DiaryActual"=masterfile$rSEAL.C2.LDL.029)
 
 ```
 
 
 <center>
-**Wave 1 Participant Completion **  
-This chart shows the combination of completions for the dyads across Wave 1.  
+**Wave 1 and 2 Participant Completion **  
+This chart shows the combination of completions for the dyads across Waves 1 and 2.  
 <center>
 
 ```{r SEAL Wave Progression, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
-
 # Format dates
-
 masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
 masterfile$Survey2Start <- as.Date(masterfile$Survey2Start, "%Y/%m/%d")
 masterfile$PDR2Start <- as.Date(masterfile$PDR2Start, "%Y/%m/%d")
 masterfile$PDR3Start <- as.Date(masterfile$PDR3Start, "%Y/%m/%d")
 #masterfile$rSEAL.C1.LDL.003 <- as.Date(masterfile$rSEAL.C1.LDL.003, "%Y/%m/%d")
 #masterfile$rSEAL.C1.LDL.029 <- as.Date(masterfile$rSEAL.C1.LDL.029, "%Y/%m/%d")
+masterfile$Survey3Start <- as.Date(masterfile$Survey3Start, "%Y/%m/%d")
+masterfile$Survey4Start <- as.Date(masterfile$Survey4Start, "%Y/%m/%d")
+masterfile$PDR5Start <- as.Date(masterfile$PDR5Start, "%Y/%m/%d")
+masterfile$PDR6Start <- as.Date(masterfile$PDR6Start, "%Y/%m/%d")
+#masterfile$rSEAL.C2.LDL.003 <- as.Date(masterfile$rSEAL.C2.LDL.003, "%Y/%m/%d")
+#masterfile$rSEAL.C2.LDL.029 <- as.Date(masterfile$rSEAL.C2.LDL.029, "%Y/%m/%d")
 
 #Classify Tests
 Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
@@ -99,69 +108,85 @@ PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "20
 PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
 LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
 LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
+Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
+PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
+PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
+LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+
 
 Wave1_Progression <- masterfile %>%
   dplyr::mutate(month = format(Survey1Start, "%m")) %>%
-  dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion) %>%
+  dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD4DiaryCompletion) %>%
   dplyr::summarize(Count = n())
  
   kable(Wave1_Progression,
-        col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D2 Diary", "Number Complete")) %>%
+        col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3","Survey 4","PDR 5", "PDR 6", "LENA D3 Diary", "LENA D4 Diary","Number Complete")) %>%
         kable_minimal()
+
 ```
 
 
 ```{r SEAL Test Counts 1, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
-
 #Counts of Variables
 Survey1Start <- as.character(masterfile$Survey1Start)
 Survey1Delinquent <- sum(is.na(masterfile$Survey1Start))
 Survey1Complete <- length(Survey1Start) - Survey1Delinquent
-
 Survey2Start <- as.character(masterfile$Survey2Start)
 Survey2Delinquent <- sum(is.na(masterfile$Survey2Start))
 Survey2Complete <- length(Survey2Start) - Survey2Delinquent
-
 PDR2Start <- as.character(masterfile$PDR2Start)
 PDR2Delinquent <- sum(is.na(masterfile$PDR2Start))
 PDR2Complete <- length(PDR2Start) - Survey2Delinquent
-
 PDR3Start <- as.character(masterfile$PDR3Start)
 PDR3Delinquent <- sum(is.na(masterfile$PDR3Start))
 PDR3Complete <- length(PDR3Start) - PDR3Delinquent
-
 LENAD1Start <- as.character(masterfile$rSEAL.C1.LDL.003)
 LENAD1Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.003))
 LENAD1Complete <- length(LENAD1Start) - LENAD1Delinquent
-
 LENAD2Start <- as.character(masterfile$rSEAL.C1.LDL.029)
 LENAD2Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.029))
 LENAD2Complete <- length(LENAD2Start) - LENAD2Delinquent
-
+Survey3Start <- as.character(masterfile$Survey3Start)
+Survey3Delinquent <- sum(is.na(masterfile$Survey3Start))
+Survey3Complete <- length(Survey3Start) - Survey3Delinquent
+Survey4Start <- as.character(masterfile$Survey4Start)
+Survey4Delinquent <- sum(is.na(masterfile$Survey4Start))
+Survey4Complete <- length(Survey4Start) - Survey4Delinquent
+PDR5Start <- as.character(masterfile$PDR5Start)
+PDR5Delinquent <- sum(is.na(masterfile$PDR5Start))
+PDR5Complete <- length(PDR5Start) - Survey4Delinquent
+PDR6Start <- as.character(masterfile$PDR6Start)
+PDR6Delinquent <- sum(is.na(masterfile$PDR6Start))
+PDR6Complete <- length(PDR6Start) - PDR6Delinquent
+LENAD3Start <- as.character(masterfile$rSEAL.C2.LDL.003)
+LENAD3Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.003))
+LENAD3Complete <- length(LENAD3Start) - LENAD3Delinquent
+LENAD4Start <- as.character(masterfile$rSEAL.C2.LDL.029)
+LENAD4Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.029))
+LENAD4Complete <- length(LENAD4Start) - LENAD4Delinquent
 
 # Create data
 data <- data.frame(
-  Wave1=c("Survey 1","Survey 2","PDR 2","PDR 3","LENA Day 1 Diary", "LENA Day 2 Diary") ,  
-  value=c(Survey1Complete,Survey2Complete,PDR2Complete,PDR3Complete,LENAD1Complete, LENAD2Complete)
+  Wave1=c("Survey 1","Survey 2","PDR 2","PDR 3","LENA Day 1 Diary", "LENA Day 2 Diary", "Survey 3","Survey 4","PDR 5","PDR 6","LENA Day 3 Diary", "LENA Day 4 Diary") ,  
+  value=c(Survey1Complete,Survey2Complete,PDR2Complete,PDR3Complete,LENAD1Complete, LENAD2Complete,Survey3Complete,Survey4Complete,PDR5Complete,PDR6Complete,LENAD3Complete, LENAD4Complete)
   )
-
-tbl <- kbl(data, col.names = c("Wave1","Counts")) %>%
+tbl <- kbl(data, col.names = c("Instrument","Counts")) %>%
   kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", font_size = 16)
 
 ```
 <center>
-**Wave 1 Participant Progression **  
-This chart shows the number of participants complete with each survey instrument across Wave 1. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.   
+**Wave 1 and 2 Participant Progression **  
+This chart shows the number of participants complete with each survey instrument across Wave 1 and 2. Delinquent in this case is currently defined as being greater than 14 days from when they completed a subjectinfo form, and no completion record for the given instrument. This does not currently capture those who have dropped out (but can/will), but is set-up to show when a participant is within 7 days and 7-14 days from when the subject info was offered. We can also set up specific ranges by instrument for delayed or delinquent statuses.   
 <center>
 ::: {}
 ```{r SEAL Wave 1 Progression, echo = FALSE, fig.width=10, fig.height=4, message=FALSE, warning=FALSE}
-
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- Sys.time()
 start <- as.Date("2020-07-01")
 Test <- today - Enrollment$SubInfoActual
-
 Enrollment2 <- Enrollment %>%
       select(RSID:Surv1CompletionTime) %>%
       mutate(
@@ -172,7 +197,6 @@ Enrollment2 <- Enrollment %>%
       TRUE                      ~ "Yellow"
       )
      )
-
 Enrollment3 <- Enrollment2%>%
       select(RSID:Surv1Status) %>%
       mutate(
@@ -183,7 +207,6 @@ Enrollment3 <- Enrollment2%>%
       TRUE                      ~ "Yellow"
       )
      )
-
 Enrollment4 <- Enrollment3%>%
       select(RSID:Surv2Status) %>%
       mutate(
@@ -194,7 +217,6 @@ Enrollment4 <- Enrollment3%>%
       TRUE                      ~ "Yellow"
       )
      )
-
 Enrollment5 <- Enrollment4%>%
       select(RSID:PDR2Status) %>%
       mutate(
@@ -205,7 +227,6 @@ Enrollment5 <- Enrollment4%>%
       TRUE                      ~ "Yellow"
       )
      )
-
 Enrollment6 <- Enrollment5%>%
       select(RSID:PDR3Status) %>%
       mutate(
@@ -216,7 +237,6 @@ Enrollment6 <- Enrollment5%>%
       TRUE                      ~ "Yellow"
       )
      )
-
 Enrollment7 <- Enrollment6%>%
       select(RSID:LENAD1DiaryStatus) %>%
       mutate(
@@ -227,32 +247,93 @@ Enrollment7 <- Enrollment6%>%
       TRUE                      ~ "Yellow"
       )
      )
-Enrollment8 <- gather(Enrollment7, "Instrument", "Status", 10:15)
 
+Enrollment8 <- Enrollment7%>%
+      select(RSID:LENAD2DiaryStatus) %>%
+      mutate(
+      Surv3Status = case_when(
+      Test > 14 & is.na(Survey3Actual) ~ "Delinquent",
+      Test < 7 & is.na(Survey3Actual) ~ "On-Track",
+      Survey3Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment9 <- Enrollment8%>%
+      select(RSID:Surv3Status) %>%
+      mutate(
+      Surv4Status = case_when(
+      Test > 14 & is.na(Survey4Actual) ~ "Delinquent",
+      Test < 7 & is.na(Survey4Actual) ~ "On-Track",
+      Survey4Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment10 <- Enrollment9%>%
+      select(RSID:Surv4Status) %>%
+      mutate(
+      PDR5Status = case_when(
+      Test > 14 & is.na(PDR5Actual) ~ "Delinquent",
+      Test < 7 & is.na(PDR5Actual) ~ "On-Track",
+      PDR5Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment11 <- Enrollment10%>%
+      select(RSID:PDR5Status) %>%
+      mutate(
+      PDR6Status = case_when(
+      Test > 14 & is.na(PDR6Actual) ~ "Delinquent",
+      Test < 7 & is.na(PDR6Actual) ~ "On-Track",
+      PDR6Actual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment12 <- Enrollment11%>%
+      select(RSID:PDR6Status) %>%
+      mutate(
+      LENAD3DiaryStatus = case_when(
+      Test > 14 & is.na(LENAD3DiaryActual) ~ "Delinquent",
+      Test < 7 & is.na(LENAD3DiaryActual) ~ "On-Track",
+      LENAD3DiaryActual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+Enrollment13 <- Enrollment12%>%
+      select(RSID:LENAD3DiaryStatus) %>%
+      mutate(
+      LENAD4DiaryStatus = case_when(
+      Test > 14 & is.na(LENAD4DiaryActual) ~ "Delinquent",
+      Test < 7 & is.na(LENAD4DiaryActual) ~ "On-Track",
+      LENAD4DiaryActual > start       ~ "Complete",
+      TRUE                      ~ "Yellow"
+      )
+     )
+
+
+Enrollment14 <- gather(Enrollment13, "Instrument", "Status", Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
 library(ggplot2) #load ggplot2 library
-Enrollment8$Cases <- factor(Enrollment8$RSID) # Create a categorical variable
-Enrollment8$Instrument <- factor(Enrollment8$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus")) # Create categorical variable
-p <- ggplot(data = Enrollment8, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
-scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary")) +
+Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
+Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
+p <- ggplot(data = Enrollment14, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
+scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
 scale_fill_discrete(labels = c("Complete", "Delinquent")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
-
-
 ```
 
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
-Wave1 <- table(Enrollment8$Instrument, Enrollment8$Status, dnn=c("Instrument", "Status"))
-
+Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = c("Survey 1","Survey 2", "PDR 2", "PDR 3", "LENA Day 1 Diary", "LENA Day 2   Diary")
+rownames(Wave1) = c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Delinquent")) %>%
         kable_minimal()
-
 Wave1Counts
 ```
 :::
-
-
