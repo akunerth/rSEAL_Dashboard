@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 1/20/2021"
+date: "Last Updated: 1/21/2021"
 output: 
   html_document:
     theme: flatly
@@ -77,16 +77,21 @@ Enrollment <- data.frame("RSID" = masterfile$RSID,
                          "LENAD3DiaryActual"=masterfile$rSEAL.C2.LDL.003,
                          "LENAD4DiaryActual"=masterfile$rSEAL.C2.LDL.029)
 
-```
+#Classify Tests
+SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
+Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
+Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
+PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
+PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
+LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
+Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
+PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
+PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
+LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
 
-
-<center>
-**Wave 1 and 2 Participant Completion **  
-This chart shows the combination of completions for the dyads across Waves 1 and 2.  
-<center>
-
-```{r SEAL Wave Progression, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
-par(mar = c(4, 4, .2, .1))
 # Format dates
 masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
 masterfile$Survey2Start <- as.Date(masterfile$Survey2Start, "%Y/%m/%d")
@@ -101,20 +106,50 @@ masterfile$PDR6Start <- as.Date(masterfile$PDR6Start, "%Y/%m/%d")
 #masterfile$rSEAL.C2.LDL.003 <- as.Date(masterfile$rSEAL.C2.LDL.003, "%Y/%m/%d")
 #masterfile$rSEAL.C2.LDL.029 <- as.Date(masterfile$rSEAL.C2.LDL.029, "%Y/%m/%d")
 
-#Classify Tests
-Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
-Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
-PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
-PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
-LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
-Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
-Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
-PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
-PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
-LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+```
 
+```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
+
+PreStudyComp<- (SubInfoCompletion == "Complete")
+PreStudyComp <- length(grep("TRUE", PreStudyComp))
+
+Wv1Comp<- (Survey1Completion == "Complete" | LENAD2DiaryCompletion == "Complete")
+Wv1Comp <- length(grep("TRUE", Wv1Comp))
+
+Wv1InProg<- (is.na(LENAD2DiaryCompletion) & Survey1Completion == "Complete")
+Wv1InProg <- length(grep("TRUE", Wv1InProg))
+
+
+IntvComp<- (Survey3Completion == "Complete" | LENAD2DiaryCompletion == "Complete")
+IntvComp <- length(grep("TRUE", IntvComp))
+
+IntvInProg<- (is.na(Survey3Completion) & LENAD2DiaryCompletion == "Complete")
+IntvInProg <- length(grep("TRUE", IntvInProg))
+
+Wv2Comp<- (LENAD4DiaryCompletion == "Complete")
+Wv2Comp <- length(grep("TRUE", Wv2Comp))
+
+Wv2InProg<- (is.na(LENAD4DiaryCompletion) & Survey3Completion == "Complete")
+Wv2InProg <- length(grep("TRUE", Wv2InProg))
+
+```
+
+**Prestudy Complete**: `r PreStudyComp` participants.  
+**Wave 1 Complete**: `r Wv1Comp` participants.  
+**Wave 1 In Progress**: `r Wv1InProg` participants.  
+**Intervention Complete**: `r IntvComp` participants.  
+**Intervention In Progress**: `r IntvInProg` participants.   
+**Wave 2 Complete**: `r Wv2Comp` participants.  
+**Wave 2 In Progress**: `r Wv2InProg` participants.  
+
+<center>
+**Wave 1 and 2 Participant Completion **  
+This chart shows the combination of completions for the dyads across Waves 1 and 2.  
+<center>
+
+```{r SEAL Wave Progression, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
+par(mar = c(4, 4, .2, .1))
 
 Wave1_Progression <- masterfile %>%
   dplyr::mutate(month = format(Survey1Start, "%m")) %>%
