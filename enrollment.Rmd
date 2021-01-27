@@ -409,7 +409,7 @@ Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
 Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
-scale_fill_discrete(labels = c("Complete", "Delinquent", "NA")) #Manually assigns colors
+scale_fill_manual(values = c("darkgreen", "brown1", "darkgrey"), labels = c("Complete", "Delinquent", "NA")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
