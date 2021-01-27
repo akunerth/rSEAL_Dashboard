@@ -46,6 +46,7 @@ library(rsvg)
 library(reshape2)
 library(skimr)
 library(here)
+library(xlsx)
 knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
@@ -56,10 +57,21 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 library(haven)
 masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/masterfile.sav'))
 
+#rSEAL Manual Consent Data
+Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
+
+#rSEAL Test Consent Data
+Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Test.xlsx', 'Sheet1'))
+
 masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
 masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
 masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
+Consents1$Informed.consent <- as.Date(Consents1$Informed.consent , "%Y/%m/%d")
+Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%Y/%m/%d")
+Consents1$Staff.Signature <- as.Date(Consents1$Staff.Signature , "%Y/%m/%d")
+Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%Y/%m/%d")
+
 #Create new DataFrame for Enrollment Table
 
 Enrollment <- data.frame("RSID" = masterfile$RSID,
@@ -76,6 +88,17 @@ Enrollment <- data.frame("RSID" = masterfile$RSID,
                          "PDR6Actual"=masterfile$PDR6Start,
                          "LENAD3DiaryActual"=masterfile$rSEAL.C2.LDL.003,
                          "LENAD4DiaryActual"=masterfile$rSEAL.C2.LDL.029)
+
+Consents1 <- data.frame("RSID" = Consents1$RSID,
+                        "InformedConsent"=Consents1$Informed.consent, "Recontact" = Consents1$Recontact, "StaffSignature"=Consents1$Staff.Signature)
+
+Consents2 <- data.frame("RSID" = Consents2$RSID,
+                        "InformedConsent"=Consents2$Informed.consent, "Recontact" = Consents2$Recontact, "StaffSignature"=Consents2$Staff.Signature)
+
+
+EnrollmentConsents <- left_join(Consents1,Consents2)
+library(dplyr)
+Enrollment <- full_join(Enrollment, EnrollmentConsents)
 
 #Classify Tests
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
@@ -229,17 +252,17 @@ Enrollment2 <- Enrollment %>%
       Test > 14 & is.na(Survey1Actual) ~ "Delinquent",
       Test < 7 & is.na(Survey1Actual) ~ "On-Track",
       Survey1Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 Enrollment3 <- Enrollment2%>%
       select(RSID:Surv1Status) %>%
       mutate(
       Surv2Status = case_when(
-      Test > 14 & is.na(Survey2Actual) ~ "Delinquent",
-      Test < 7 & is.na(Survey2Actual) ~ "On-Track",
+      Test > 3 & is.na(Survey2Actual) ~ "Delinquent",
+      Test < 3 & is.na(Survey2Actual) ~ "On-Track",
       Survey2Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 Enrollment4 <- Enrollment3%>%
@@ -249,7 +272,7 @@ Enrollment4 <- Enrollment3%>%
       Test > 14 & is.na(PDR2Actual) ~ "Delinquent",
       Test < 7 & is.na(PDR2Actual) ~ "On-Track",
       PDR2Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 Enrollment5 <- Enrollment4%>%
@@ -259,7 +282,7 @@ Enrollment5 <- Enrollment4%>%
       Test > 14 & is.na(PDR3Actual) ~ "Delinquent",
       Test < 7 & is.na(PDR3Actual) ~ "On-Track",
       PDR3Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 Enrollment6 <- Enrollment5%>%
@@ -269,7 +292,7 @@ Enrollment6 <- Enrollment5%>%
       Test > 14 & is.na(LENAD1DiaryActual) ~ "Delinquent",
       Test < 7 & is.na(LENAD1DiaryActual) ~ "On-Track",
       LENAD1DiaryActual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 Enrollment7 <- Enrollment6%>%
@@ -279,7 +302,7 @@ Enrollment7 <- Enrollment6%>%
       Test > 14 & is.na(LENAD2DiaryActual) ~ "Delinquent",
       Test < 7 & is.na(LENAD2DiaryActual) ~ "On-Track",
       LENAD2DiaryActual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -290,7 +313,7 @@ Enrollment8 <- Enrollment7%>%
       Test > 14 & is.na(Survey3Actual) ~ "Delinquent",
       Test < 7 & is.na(Survey3Actual) ~ "On-Track",
       Survey3Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -301,7 +324,7 @@ Enrollment9 <- Enrollment8%>%
       Test > 14 & is.na(Survey4Actual) ~ "Delinquent",
       Test < 7 & is.na(Survey4Actual) ~ "On-Track",
       Survey4Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -312,7 +335,7 @@ Enrollment10 <- Enrollment9%>%
       Test > 14 & is.na(PDR5Actual) ~ "Delinquent",
       Test < 7 & is.na(PDR5Actual) ~ "On-Track",
       PDR5Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -323,7 +346,7 @@ Enrollment11 <- Enrollment10%>%
       Test > 14 & is.na(PDR6Actual) ~ "Delinquent",
       Test < 7 & is.na(PDR6Actual) ~ "On-Track",
       PDR6Actual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -334,7 +357,7 @@ Enrollment12 <- Enrollment11%>%
       Test > 14 & is.na(LENAD3DiaryActual) ~ "Delinquent",
       Test < 7 & is.na(LENAD3DiaryActual) ~ "On-Track",
       LENAD3DiaryActual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -345,7 +368,7 @@ Enrollment13 <- Enrollment12%>%
       Test > 14 & is.na(LENAD4DiaryActual) ~ "Delinquent",
       Test < 7 & is.na(LENAD4DiaryActual) ~ "On-Track",
       LENAD4DiaryActual > start       ~ "Complete",
-      TRUE                      ~ "Yellow"
+      TRUE                      ~ "Delayed"
       )
      )
 
@@ -356,7 +379,7 @@ Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
 Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill=Status) ) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
-scale_fill_discrete(labels = c("Complete", "Delinquent")) #Manually assigns colors
+scale_fill_discrete(labels = c("Complete", "Delayed", "Delinquent")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
@@ -367,7 +390,7 @@ Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument",
 library(kableExtra)
 rownames(Wave1) = c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
-        col.names = c("Complete","Delinquent")) %>%
+        col.names = c("Complete","Delayed","Delinquent")) %>%
         kable_minimal()
 Wave1Counts
 ```
