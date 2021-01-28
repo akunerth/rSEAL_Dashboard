@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 1/21/2021"
+date: "Last Updated: 1/28/2021"
 output: 
   html_document:
     theme: flatly
@@ -122,6 +122,7 @@ Enrollment <- full_join(Enrollment, EnrollmentConsents)
 
 
 #Classify Tests
+ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$InformedConsent > "2020-07-01", "Complete", "Incomplete")
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
 Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
 Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
@@ -142,8 +143,11 @@ LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rS
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 
-PreStudyComp<- (SubInfoCompletion == "Complete")
+PreStudyComp<- (ConsentCompletion == "Complete")
 PreStudyComp <- length(grep("TRUE", PreStudyComp))
+
+PreStudyInProg<- (is.na(ConsentCompletion))
+PreStudyInProg <- length(grep("TRUE", PreStudyInProg))
 
 Wv1Comp<- (Survey1Completion == "Complete" | LENAD2DiaryCompletion == "Complete")
 Wv1Comp <- length(grep("TRUE", Wv1Comp))
@@ -165,15 +169,63 @@ Wv2InProg<- (is.na(LENAD4DiaryCompletion) & Survey3Completion == "Complete")
 Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
 ```
+<center>
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-primary">**PreStudy Complete**<br>`r PreStudyComp`</a>
+  </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-primary">**PreStudy In Progress**<br>`r PreStudyInProg`</a>
+  </div>
+  
+</div>
+  
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-default">**Wave 1 Complete**<br>`r Wv1Comp`</a>
+  </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-default">**Wave 1 In Progress**<br>`r Wv1InProg`</a>
+  </div>
+  
+</div>
 
-**Prestudy Complete**: `r PreStudyComp` participants.  
-**Wave 1 Complete**: `r Wv1Comp` participants.  
-**Wave 1 In Progress**: `r Wv1InProg` participants.  
-**Intervention Complete**: `r IntvComp` participants.  
-**Intervention In Progress**: `r IntvInProg` participants.   
-**Wave 2 Complete**: `r Wv2Comp` participants.  
-**Wave 2 In Progress**: `r Wv2InProg` participants.  
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-success">**Intervention Complete**<br>`r IntvComp`</a>
+  </div>
+ <div class="btn-group">
+<a href="#" class="btn btn-success">**Intervention In Progress**<br>`r IntvInProg`</a>
+  </div>
+</div>
 
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-info">**Wave 2 Complete**<br>`r Wv2Comp`.</a>
+  </div>
+ <div class="btn-group">
+<a href="#" class="btn btn-info">**Wave 2 In Progress**<br>`r Wv2InProg`</a>
+  </div>
+</div>
+
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-danger">**Wave 3 Complete**<br>TBD</a>
+  </div>
+ <div class="btn-group">
+<a href="#" class="btn btn-danger">**Wave 3 In Progress**<br>TBD</a>
+  </div>
+</div>
+</div>
+<br>
+<br>
+<center>
+
+
+
+  
 <center>
 **Wave 1 and 2 Participant Completion **  
 This chart shows the combination of completions for the dyads across Waves 1 and 2.  
