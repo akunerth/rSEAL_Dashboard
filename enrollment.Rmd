@@ -203,7 +203,7 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-info">**Wave 2 Complete**<br>`r Wv2Comp`.</a>
+<a href="#" class="btn btn-info">**Wave 2 Complete**<br>`r Wv2Comp`</a>
   </div>
  <div class="btn-group">
 <a href="#" class="btn btn-info">**Wave 2 In Progress**<br>`r Wv2InProg`</a>
