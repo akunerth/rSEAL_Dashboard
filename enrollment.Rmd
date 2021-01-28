@@ -122,7 +122,7 @@ Enrollment <- full_join(Enrollment, EnrollmentConsents)
 
 
 #Classify Tests
-ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$InformedConsent > "2020-07-01", "Complete", "Incomplete")
+ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$StaffSignature > "2020-07-01", "Complete", "Incomplete")
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
 Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
 Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
@@ -304,6 +304,7 @@ This chart shows the number of participants complete with each survey instrument
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- Sys.time()
 start <- as.Date("2020-07-01")
+Test0 <- today - Enrollment$StaffSignature
 Test <- today - Enrollment$SubInfoActual
 Test1 <- today - Enrollment$Survey1Actual
 Test2 <- today - Enrollment$Survey2Actual
@@ -316,8 +317,19 @@ Test8 <- today - Enrollment$Survey4Actual
 Test9 <- today - Enrollment$PDR5Actual
 Test10 <- today - Enrollment$PDR6Actual
 Test11 <- today - Enrollment$LENAD3DiaryActual
-Enrollment2 <- Enrollment %>%
-      select(RSID:Surv1CompletionTime) %>%
+Enrollment1 <- Enrollment %>%
+      select(RSID:ConsentCompletion) %>%
+      mutate(
+      PreStudyStatus = case_when(
+      Test0 > 5 & is.na(Enrollment$StaffSignature) ~ "Delinquent",
+      Test0 <= 15 & Test >= 2 & is.na(Enrollment$StaffSignature) ~ "Warning",
+      Test0 < 2 & is.na(Enrollment$StaffSignature) ~ "On-Track",
+      Enrollment$StaffSignature > start       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+Enrollment2 <- Enrollment1 %>%
+      select(RSID:PreStudyStatus) %>%
       mutate(
       Surv1Status = case_when(
       Test > 14 & is.na(Survey1Actual) ~ "Delinquent",
@@ -456,13 +468,13 @@ Enrollment13 <- Enrollment12%>%
      )
 
 
-Enrollment14 <- gather(Enrollment13, "Instrument", "Status", Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
+Enrollment14 <- gather(Enrollment13, "Instrument", "Status", PreStudyStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
 library(ggplot2) #load ggplot2 library
 Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "Delinquent", "NA"))
 Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
-Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
+Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("PreStudyStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + # Creates stacked bar chart
-scale_x_discrete(labels=c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
+scale_x_discrete(labels=c("PreStudy","Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
 scale_fill_manual(values = c("darkgrey","brown1","darkgreen" ), labels = c("NA", "Delinquent","Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
@@ -472,7 +484,7 @@ p
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = c("Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
+rownames(Wave1) = c("PreStudy", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Delinquent", "NA")) %>%
         kable_minimal()
