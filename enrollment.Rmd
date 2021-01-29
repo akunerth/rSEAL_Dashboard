@@ -223,8 +223,6 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 <br>
 <center>
 
-
-
   
 <center>
 **Wave 1 and 2 Participant Completion **  
@@ -239,6 +237,7 @@ Wave1_Progression <- masterfile %>%
   dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD4DiaryCompletion) %>%
   dplyr::summarize(Count = n())
  
+library(kableExtra)
   kable(Wave1_Progression,
         col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3","Survey 4","PDR 5", "PDR 6", "LENA D3 Diary", "LENA D4 Diary","Number Complete")) %>%
         kable_minimal()
