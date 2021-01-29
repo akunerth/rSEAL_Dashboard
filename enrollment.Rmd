@@ -303,7 +303,7 @@ This chart shows the number of participants complete with each survey instrument
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- Sys.time()
 start <- as.Date("2020-07-01")
-Test0 <- today - Enrollment$StaffSignature
+Test0 <- today - Enrollment$InformedConsent
 Test <- today - Enrollment$SubInfoActual
 Test1 <- today - Enrollment$Survey1Actual
 Test2 <- today - Enrollment$Survey2Actual
@@ -321,7 +321,7 @@ Enrollment1 <- Enrollment %>%
       mutate(
       PreStudyStatus = case_when(
       Test0 > 5 & is.na(Enrollment$StaffSignature) ~ "Delinquent",
-      Test0 <= 15 & Test >= 2 & is.na(Enrollment$StaffSignature) ~ "Warning",
+      Test0 <= 5 & Test >= 2 & is.na(Enrollment$StaffSignature) ~ "Warning",
       Test0 < 2 & is.na(Enrollment$StaffSignature) ~ "On-Track",
       Enrollment$StaffSignature > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -446,8 +446,8 @@ Enrollment12 <- Enrollment11%>%
       select(RSID:PDR6Status) %>%
       mutate(
       LENAD3DiaryStatus = case_when(
-      Test10 > 7 & is.na(LENAD3DiaryActual) ~ "Delinquent",
-      Test10 <= 7 & Test >= 3 & is.na(LENAD3DiaryActual) ~ "Warning",
+      Test10 > 14 & is.na(LENAD3DiaryActual) ~ "Delinquent",
+      Test10 <= 14 & Test >= 7 & is.na(LENAD3DiaryActual) ~ "Warning",
       Test10 < 7 & is.na(LENAD3DiaryActual) ~ "On-Track",
       LENAD3DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -458,8 +458,8 @@ Enrollment13 <- Enrollment12%>%
       select(RSID:LENAD3DiaryStatus) %>%
       mutate(
       LENAD4DiaryStatus = case_when(
-      Test11 > 14 & is.na(LENAD4DiaryActual) ~ "Delinquent",
-      Test11 <= 14 & Test >= 7 & is.na(LENAD4DiaryActual) ~ "Warning",
+      Test11 > 7 & is.na(LENAD4DiaryActual) ~ "Delinquent",
+      Test11 <= 7 & Test >= 3 & is.na(LENAD4DiaryActual) ~ "Warning",
       Test11 < 7 & is.na(LENAD4DiaryActual) ~ "On-Track",
       LENAD4DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
