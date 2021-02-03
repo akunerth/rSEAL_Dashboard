@@ -89,6 +89,21 @@ masterfile$rSEAL.C2.LDL.029 <- as.Date(masterfile$rSEAL.C2.LDL.029, "%Y-%m-%d")
 masterfile$rSEAL.C1.LDL.003 <- as.Date(masterfile$rSEAL.C1.LDL.003, "%Y-%m-%d")
 masterfile$rSEAL.C1.LDL.029 <- as.Date(masterfile$rSEAL.C1.LDL.029, "%Y-%m-%d")
 
+#Classify Tests
+SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
+Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
+Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
+PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
+PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
+LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
+Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
+PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
+PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
+LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
+LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+
 #Create new DataFrame for Enrollment Table
 
 Enrollment <- data.frame("RSID" = masterfile$RSID,
@@ -104,40 +119,35 @@ Enrollment <- data.frame("RSID" = masterfile$RSID,
                          "PDR5Actual"=masterfile$PDR5Start,
                          "PDR6Actual"=masterfile$PDR6Start,
                          "LENAD3DiaryActual"=masterfile$rSEAL.C2.LDL.003,
-                         "LENAD4DiaryActual"=masterfile$rSEAL.C2.LDL.029)
+                         "LENAD4DiaryActual"=masterfile$rSEAL.C2.LDL.029,
+                         "SubInfoCompletion"=masterfile$SubInfoCompletion,
+                         "Survey1Completion"=masterfile$Survey1Completion,
+                         "Survey2Completion"=masterfile$Survey2Completion,
+                         "PDR2Completion"=masterfile$PDR2Completion,
+                         "PDR3Completion"=masterfile$PDR3Completion,
+                         "LENAD1DiaryCompletion"=masterfile$LENAD1DiaryCompletion,
+                         "LENAD2DiaryCompletion"=masterfile$LENAD2DiaryCompletion,
+                         "Survey3Completion"=masterfile$Survey3Completion,
+                         "Survey4Completion"=masterfile$Survey4Completion,
+                         "PDR5Completion"=masterfile$PDR5Completion,
+                         "PDR6Completion"=masterfile$PDR6Completion,
+                         "LENAD3DiaryCompletion"=masterfile$LENAD3DiaryCompletion,
+                         "LENAD4DiaryCompletion"=masterfile$LENAD4DiaryCompletion)
 
 Consents1 <- data.frame("RSID" = Consents1$RSID,
-                        "InformedConsent"= Consents1$Informed.consent, 
+                        "Informed Consent"= Consents1$Informed.consent, 
                         "Recontact" = Consents1$Recontact,
                         "StaffSignature"= Consents1$Staff.Signature)
 
 Consents2 <- data.frame("RSID" = Consents2$RSID,
-                        "InformedConsent"= Consents2$Informed.consent, 
+                        "Informed Consent"= Consents2$Informed.consent, 
                         "Recontact" = Consents2$Recontact,
                         "StaffSignature"= Consents2$Staff.Signature)
 
 EnrollmentConsents <- left_join(Consents1,Consents2)
 library(dplyr)
 Enrollment <- full_join(Enrollment, EnrollmentConsents)
-
-
-#Classify Tests
-ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$InformedConsent > "2020-07-01", "Complete", "Incomplete")
-SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
-Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
-Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
-PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
-PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
-LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
-Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
-Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
-PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
-PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
-LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
-
-
+ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", "Complete", "Incomplete")
 ```
 
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
@@ -149,7 +159,7 @@ ConsentComp <- length(grep("TRUE", ConsentComp))
 PostConsentComp<- (ConsentCompletion == "Complete" & SubInfoCompletion == "Complete")
 PostConsentComp<- length(grep("TRUE", PostConsentComp))
 
-PostConsentInProg<- (is.na(SubInfoCompletion) & ConsentCompletion == "Complete")
+PostConsentInProg<- (ConsentCompletion == "Complete" & is.na(SubInfoCompletion))
 PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
 
 Wv1Comp<- (ConsentCompletion == "Complete" & LENAD2DiaryCompletion == "Complete")
@@ -255,8 +265,9 @@ This chart shows the combination of completions for the dyads across Waves 1 and
 ```{r SEAL Wave Progression, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 
-Wave1_Progression <- masterfile %>%
-  dplyr::mutate(month = format(Survey1Start, "%m")) %>%
+
+Wave1_Progression <- Enrollment %>%
+  dplyr::mutate(month = format(SubInfoActual, "%m")) %>%
   dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD4DiaryCompletion) %>%
   dplyr::summarize(Count = n())
  
@@ -326,7 +337,7 @@ This chart shows the number of participants complete with each survey instrument
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- Sys.time()
 start <- as.Date("2020-07-01")
-Test0 <- today - Enrollment$InformedConsent
+Test0 <- today - Enrollment$Informed.Consent
 Test <- today - Enrollment$SubInfoActual
 Test1 <- today - Enrollment$Survey1Actual
 Test2 <- today - Enrollment$Survey2Actual
@@ -340,10 +351,10 @@ Test9 <- today - Enrollment$PDR5Actual
 Test10 <- today - Enrollment$PDR6Actual
 Test11 <- today - Enrollment$LENAD3DiaryActual
 Enrollment1 <- Enrollment %>%
-      select(RSID:ConsentCompletion) %>%
+      select(RSID:Surv1CompletionTime) %>%
       mutate(
-      ConsentStatus = case_when(is.na(Enrollment$InformedConsent) ~ "Delinquent",
-      Enrollment$InformedConsent > start       ~ "Complete",
+      ConsentStatus = case_when(is.na(Enrollment$Informed.Consent) ~ "Delinquent",
+      Enrollment$Informed.Consent > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
      )
@@ -353,7 +364,7 @@ Enrollment1.1 <- Enrollment1 %>%
       mutate(
       PostConsentStatus = case_when(
       Test0 > 7 & is.na(SubInfoActual) ~ "Delinquent",
-      Test0 <= 7 & Test >= 3 & is.na(SubInfoActual) ~ "Warning",
+      Test0 <= 7 & Test0 >= 3 & is.na(SubInfoActual) ~ "Warning",
       Test0 < 3 & is.na(SubInfoActual) ~ "On-Track",
       SubInfoActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -364,9 +375,9 @@ Enrollment2 <- Enrollment1.1 %>%
       select(RSID:PostConsentStatus) %>%
       mutate(
       Surv1Status = case_when(
-      Test > 14 & is.na(Survey1Actual) ~ "Delinquent",
-      Test <= 14 & Test >= 7 & is.na(Survey1Actual) ~ "Warning",
-      Test < 7 & is.na(Survey1Actual) ~ "On-Track",
+      Test > 7 & is.na(Survey1Actual) ~ "Delinquent",
+      Test <= 7 & Test >= 3 & is.na(Survey1Actual) ~ "Warning",
+      Test < 3 & is.na(Survey1Actual) ~ "On-Track",
       Survey1Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -376,7 +387,7 @@ Enrollment3 <- Enrollment2%>%
       mutate(
       Surv2Status = case_when(
       Test1 > 7 & is.na(Survey2Actual) ~ "Delinquent",
-      Test1 <= 7 & Test >= 3 & is.na(Survey2Actual) ~ "Warning",
+      Test1 <= 7 & Test1 >= 3 & is.na(Survey2Actual) ~ "Warning",
       Test1 < 3 & is.na(Survey2Actual) ~ "On-Track",
       Survey2Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -386,9 +397,9 @@ Enrollment4 <- Enrollment3%>%
       select(RSID:Surv2Status) %>%
       mutate(
       PDR2Status = case_when(
-      Test2 > 7 & is.na(PDR2Actual) ~ "Delinquent",
-      Test2 <= 7 & Test >= 3 & is.na(PDR2Actual) ~ "Warning",
-      Test2 < 3 & is.na(PDR2Actual) ~ "On-Track",
+      Test2 > 3 & is.na(PDR2Actual) ~ "Delinquent",
+      Test2 <= 3 & Test2 >= 1 & is.na(PDR2Actual) ~ "Warning",
+      Test2 < 1 & is.na(PDR2Actual) ~ "On-Track",
       PDR2Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -397,9 +408,9 @@ Enrollment5 <- Enrollment4%>%
       select(RSID:PDR2Status) %>%
       mutate(
       PDR3Status = case_when(
-      Test3 > 7 & is.na(PDR3Actual) ~ "Delinquent",
-      Test3 <= 7 & Test >= 3 & is.na(PDR3Actual) ~ "Warning",
-      Test3 < 3 & is.na(PDR3Actual) ~ "On-Track",
+      Test3 > 3 & is.na(PDR3Actual) ~ "Delinquent",
+      Test3 <= 3 & Test3 >= 1 & is.na(PDR3Actual) ~ "Warning",
+      Test3 < 1 & is.na(PDR3Actual) ~ "On-Track",
       PDR3Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -408,9 +419,9 @@ Enrollment6 <- Enrollment5%>%
       select(RSID:PDR3Status) %>%
       mutate(
       LENAD1DiaryStatus = case_when(
-      Test4 > 14 & is.na(LENAD1DiaryActual) ~ "Delinquent",
-      Test4 <= 14 & Test >= 7 & is.na(LENAD1DiaryActual) ~ "Warning",
-      Test4 < 7 & is.na(LENAD1DiaryActual) ~ "On-Track",
+      Test4 > 4 & is.na(LENAD1DiaryActual) ~ "Delinquent",
+      Test4 <= 4 & Test4 >= 2 & is.na(LENAD1DiaryActual) ~ "Warning",
+      Test4 < 2 & is.na(LENAD1DiaryActual) ~ "On-Track",
       LENAD1DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -419,9 +430,9 @@ Enrollment7 <- Enrollment6%>%
       select(RSID:LENAD1DiaryStatus) %>%
       mutate(
       LENAD2DiaryStatus = case_when(
-      Test5 > 7 & is.na(LENAD2DiaryActual) ~ "Delinquent",
-      Test5 <= 7 & Test >= 3 & is.na(LENAD2DiaryActual) ~ "Warning",
-      Test5 < 3 & is.na(LENAD2DiaryActual) ~ "On-Track",
+      Test5 > 3 & is.na(LENAD2DiaryActual) ~ "Delinquent",
+      Test5 <= 3 & Test5 >= 1 & is.na(LENAD2DiaryActual) ~ "Warning",
+      Test5 < 1 & is.na(LENAD2DiaryActual) ~ "On-Track",
       LENAD2DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -432,7 +443,7 @@ Enrollment8 <- Enrollment7%>%
       mutate(
       Surv3Status = case_when(
       Test6 > 90 & is.na(Survey3Actual) ~ "Delinquent",
-      Test6 <= 90 & Test >= 70 & is.na(Survey3Actual) ~ "Warning",
+      Test6 <= 90 & Test6 >= 70 & is.na(Survey3Actual) ~ "Warning",
       Test6 < 70 & is.na(Survey3Actual) ~ "On-Track",
       Survey3Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -444,7 +455,7 @@ Enrollment9 <- Enrollment8%>%
       mutate(
       Surv4Status = case_when(
       Test7 > 7 & is.na(Survey4Actual) ~ "Delinquent",
-      Test7 <= 7 & Test >= 3 & is.na(Survey4Actual) ~ "Warning",
+      Test7 <= 7 & Test7 >= 3 & is.na(Survey4Actual) ~ "Warning",
       Test7 < 3 & is.na(Survey4Actual) ~ "On-Track",
       Survey4Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -455,9 +466,9 @@ Enrollment10 <- Enrollment9%>%
       select(RSID:Surv4Status) %>%
       mutate(
       PDR5Status = case_when(
-      Test8 > 7 & is.na(PDR5Actual) ~ "Delinquent",
-      Test8 <= 7 & Test >= 3 & is.na(PDR5Actual) ~ "Warning",
-      Test8 < 7 & is.na(PDR5Actual) ~ "On-Track",
+      Test8 > 3 & is.na(PDR5Actual) ~ "Delinquent",
+      Test8 <= 3 & Test8 >= 1 & is.na(PDR5Actual) ~ "Warning",
+      Test8 < 1 & is.na(PDR5Actual) ~ "On-Track",
       PDR5Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -467,9 +478,9 @@ Enrollment11 <- Enrollment10%>%
       select(RSID:PDR5Status) %>%
       mutate(
       PDR6Status = case_when(
-      Test9 > 7 & is.na(PDR6Actual) ~ "Delinquent",
-      Test9 <= 7 & Test >= 3 & is.na(PDR6Actual) ~ "Warning",
-      Test9 < 7 & is.na(PDR6Actual) ~ "On-Track",
+      Test9 > 3 & is.na(PDR6Actual) ~ "Delinquent",
+      Test9 <= 3 & Test9 >= 1 & is.na(PDR6Actual) ~ "Warning",
+      Test9 < 1 & is.na(PDR6Actual) ~ "On-Track",
       PDR6Actual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -479,9 +490,9 @@ Enrollment12 <- Enrollment11%>%
       select(RSID:PDR6Status) %>%
       mutate(
       LENAD3DiaryStatus = case_when(
-      Test10 > 14 & is.na(LENAD3DiaryActual) ~ "Delinquent",
-      Test10 <= 14 & Test >= 7 & is.na(LENAD3DiaryActual) ~ "Warning",
-      Test10 < 7 & is.na(LENAD3DiaryActual) ~ "On-Track",
+      Test10 > 4 & is.na(LENAD3DiaryActual) ~ "Delinquent",
+      Test10 <= 4 & Test10 >= 2 & is.na(LENAD3DiaryActual) ~ "Warning",
+      Test10 < 2 & is.na(LENAD3DiaryActual) ~ "On-Track",
       LENAD3DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -491,9 +502,9 @@ Enrollment13 <- Enrollment12%>%
       select(RSID:LENAD3DiaryStatus) %>%
       mutate(
       LENAD4DiaryStatus = case_when(
-      Test11 > 7 & is.na(LENAD4DiaryActual) ~ "Delinquent",
-      Test11 <= 7 & Test >= 3 & is.na(LENAD4DiaryActual) ~ "Warning",
-      Test11 < 7 & is.na(LENAD4DiaryActual) ~ "On-Track",
+      Test11 > 3 & is.na(LENAD4DiaryActual) ~ "Delinquent",
+      Test11 <= 3 & Test >= 1 & is.na(LENAD4DiaryActual) ~ "Warning",
+      Test11 < 1 & is.na(LENAD4DiaryActual) ~ "On-Track",
       LENAD4DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
