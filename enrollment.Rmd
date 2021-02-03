@@ -122,7 +122,7 @@ Enrollment <- full_join(Enrollment, EnrollmentConsents)
 
 
 #Classify Tests
-ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$StaffSignature > "2020-07-01", "Complete", "Incomplete")
+ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$InformedConsent > "2020-07-01", "Complete", "Incomplete")
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
 Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
 Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
@@ -143,20 +143,23 @@ LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rS
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 
-PreStudyComp<- (ConsentCompletion == "Complete")
-PreStudyComp <- length(grep("TRUE", PreStudyComp))
+ConsentComp<- (ConsentCompletion == "Complete")
+ConsentComp <- length(grep("TRUE", ConsentComp))
 
-PreStudyInProg<- (is.na(ConsentCompletion))
-PreStudyInProg <- length(grep("TRUE", PreStudyInProg))
+PostConsentComp<- (ConsentCompletion == "Complete" & SubInfoCompletion == "Complete")
+PostConsentComp<- length(grep("TRUE", PostConsentComp))
 
-Wv1Comp<- (Survey1Completion == "Complete" | LENAD2DiaryCompletion == "Complete")
+PostConsentInProg<- (is.na(SubInfoCompletion) & ConsentCompletion == "Complete")
+PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
+
+Wv1Comp<- (ConsentCompletion == "Complete" & LENAD2DiaryCompletion == "Complete")
 Wv1Comp <- length(grep("TRUE", Wv1Comp))
 
-Wv1InProg<- (is.na(LENAD2DiaryCompletion) & Survey1Completion == "Complete")
+Wv1InProg<- (is.na(LENAD2DiaryCompletion) & ConsentCompletion == "Complete")
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
 
 
-IntvComp<- (Survey3Completion == "Complete" | LENAD2DiaryCompletion == "Complete")
+IntvComp<- (Survey3Completion == "Complete" & LENAD2DiaryCompletion == "Complete")
 IntvComp <- length(grep("TRUE", IntvComp))
 
 IntvInProg<- (is.na(Survey3Completion) & LENAD2DiaryCompletion == "Complete")
@@ -170,24 +173,34 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
 ```
 <center>
+
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-primary">**PreStudy Complete**<br>`r PreStudyComp`</a>
+<a href="#" class="btn">**Pre-Study Complete**<br>TBD</a>
+  </div>
+ <div class="btn-group">
+<a href="#" class="btn">**Pre-Study In Progress**<br>TBD</a>
+  </div>
+</div>
+
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-default">**Post-Consent Complete**<br>`r PostConsentComp`</a>
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-primary">**PreStudy In Progress**<br>`r PreStudyInProg`</a>
+<a href="#" class="btn btn-default">**Post-Consent In Progress**<br>`r PostConsentInProg`</a>
   </div>
   
 </div>
   
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-default">**Wave 1 Complete**<br>`r Wv1Comp`</a>
+<a href="#" class="btn btn-primary">**Wave 1 Complete**<br>`r Wv1Comp`</a>
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-default">**Wave 1 In Progress**<br>`r Wv1InProg`</a>
+<a href="#" class="btn btn-primary">**Wave 1 In Progress**<br>`r Wv1InProg`</a>
   </div>
   
 </div>
@@ -212,12 +225,22 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Wave 3 Complete**<br>TBD</a>
+<a href="#" class="btn btn-warning">**Wave 3 Complete**<br>TBD</a>
   </div>
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Wave 3 In Progress**<br>TBD</a>
+<a href="#" class="btn btn-warning">**Wave 3 In Progress**<br>TBD</a>
   </div>
 </div>
+
+<div class="btn-group btn-group-justified">
+ <div class="btn-group">
+<a href="#" class="btn btn-danger">**Study Complete**<br>TBD</a>
+  </div>
+ <div class="btn-group">
+<a href="#" class="btn btn-danger">**Study In Progress**<br>TBD</a>
+  </div>
+</div>
+
 </div>
 <br>
 <br>
