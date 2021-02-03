@@ -271,50 +271,50 @@ library(kableExtra)
 ```{r SEAL Test Counts 1, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
 #Counts of Variables
-Survey1Start <- as.character(masterfile$Survey1Start)
-Survey1Delinquent <- sum(is.na(masterfile$Survey1Start))
-Survey1Complete <- length(Survey1Start) - Survey1Delinquent
-Survey2Start <- as.character(masterfile$Survey2Start)
-Survey2Delinquent <- sum(is.na(masterfile$Survey2Start))
-Survey2Complete <- length(Survey2Start) - Survey2Delinquent
-PDR2Start <- as.character(masterfile$PDR2Start)
-PDR2Delinquent <- sum(is.na(masterfile$PDR2Start))
-PDR2Complete <- length(PDR2Start) - Survey2Delinquent
-PDR3Start <- as.character(masterfile$PDR3Start)
-PDR3Delinquent <- sum(is.na(masterfile$PDR3Start))
-PDR3Complete <- length(PDR3Start) - PDR3Delinquent
-LENAD1Start <- as.character(masterfile$rSEAL.C1.LDL.003)
-LENAD1Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.003))
-LENAD1Complete <- length(LENAD1Start) - LENAD1Delinquent
-LENAD2Start <- as.character(masterfile$rSEAL.C1.LDL.029)
-LENAD2Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.029))
-LENAD2Complete <- length(LENAD2Start) - LENAD2Delinquent
-Survey3Start <- as.character(masterfile$Survey3Start)
-Survey3Delinquent <- sum(is.na(masterfile$Survey3Start))
-Survey3Complete <- length(Survey3Start) - Survey3Delinquent
-Survey4Start <- as.character(masterfile$Survey4Start)
-Survey4Delinquent <- sum(is.na(masterfile$Survey4Start))
-Survey4Complete <- length(Survey4Start) - Survey4Delinquent
-PDR5Start <- as.character(masterfile$PDR5Start)
-PDR5Delinquent <- sum(is.na(masterfile$PDR5Start))
-PDR5Complete <- length(PDR5Start) - Survey4Delinquent
-PDR6Start <- as.character(masterfile$PDR6Start)
-PDR6Delinquent <- sum(is.na(masterfile$PDR6Start))
-PDR6Complete <- length(PDR6Start) - PDR6Delinquent
-LENAD3Start <- as.character(masterfile$rSEAL.C2.LDL.003)
-LENAD3Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.003))
-LENAD3Complete <- length(LENAD3Start) - LENAD3Delinquent
-LENAD4Start <- as.character(masterfile$rSEAL.C2.LDL.029)
-LENAD4Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.029))
-LENAD4Complete <- length(LENAD4Start) - LENAD4Delinquent
+#Survey1Start <- as.character(masterfile$Survey1Start)
+#Survey1Delinquent <- sum(is.na(masterfile$Survey1Start))
+#Survey1Complete <- length(Survey1Start) - Survey1Delinquent
+#Survey2Start <- as.character(masterfile$Survey2Start)
+#Survey2Delinquent <- sum(is.na(masterfile$Survey2Start))
+#Survey2Complete <- length(Survey2Start) - Survey2Delinquent
+#PDR2Start <- as.character(masterfile$PDR2Start)
+#PDR2Delinquent <- sum(is.na(masterfile$PDR2Start))
+#PDR2Complete <- length(PDR2Start) - Survey2Delinquent
+#PDR3Start <- as.character(masterfile$PDR3Start)
+#PDR3Delinquent <- sum(is.na(masterfile$PDR3Start))
+#PDR3Complete <- length(PDR3Start) - PDR3Delinquent
+#LENAD1Start <- as.character(masterfile$rSEAL.C1.LDL.003)
+#LENAD1Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.003))
+#LENAD1Complete <- length(LENAD1Start) - LENAD1Delinquent
+#LENAD2Start <- as.character(masterfile$rSEAL.C1.LDL.029)
+#LENAD2Delinquent <- sum(is.na(masterfile$rSEAL.C1.LDL.029))
+#LENAD2Complete <- length(LENAD2Start) - LENAD2Delinquent
+#Survey3Start <- as.character(masterfile$Survey3Start)
+#Survey3Delinquent <- sum(is.na(masterfile$Survey3Start))
+#Survey3Complete <- length(Survey3Start) - Survey3Delinquent
+#Survey4Start <- as.character(masterfile$Survey4Start)
+#Survey4Delinquent <- sum(is.na(masterfile$Survey4Start))
+#Survey4Complete <- length(Survey4Start) - Survey4Delinquent
+#PDR5Start <- as.character(masterfile$PDR5Start)
+#PDR5Delinquent <- sum(is.na(masterfile$PDR5Start))
+#PDR5Complete <- length(PDR5Start) - Survey4Delinquent
+#PDR6Start <- as.character(masterfile$PDR6Start)
+#PDR6Delinquent <- sum(is.na(masterfile$PDR6Start))
+#PDR6Complete <- length(PDR6Start) - PDR6Delinquent
+#LENAD3Start <- as.character(masterfile$rSEAL.C2.LDL.003)
+#LENAD3Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.003))
+#LENAD3Complete <- length(LENAD3Start) - LENAD3Delinquent
+#LENAD4Start <- as.character(masterfile$rSEAL.C2.LDL.029)
+#LENAD4Delinquent <- sum(is.na(masterfile$rSEAL.C2.LDL.029))
+#LENAD4Complete <- length(LENAD4Start) - LENAD4Delinquent
 
 # Create data
-data <- data.frame(
-  Wave1=c("Survey 1","Survey 2","PDR 2","PDR 3","LENA Day 1 Diary", "LENA Day 2 Diary", "Survey 3","Survey 4","PDR 5","PDR 6","LENA Day 3 Diary", "LENA Day 4 Diary") ,  
-  value=c(Survey1Complete,Survey2Complete,PDR2Complete,PDR3Complete,LENAD1Complete, LENAD2Complete,Survey3Complete,Survey4Complete,PDR5Complete,PDR6Complete,LENAD3Complete, LENAD4Complete)
-  )
-tbl <- kbl(data, col.names = c("Instrument","Counts")) %>%
-  kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", font_size = 16)
+#data <- data.frame(
+ # Wave1=c("Survey 1","Survey 2","PDR 2","PDR 3","LENA Day 1 Diary", "LENA Day 2 Diary", "Survey 3","Survey 4","PDR 5","PDR 6","LENA Day 3 Diary", "LENA Day 4 Diary") ,  
+  #value=c(Survey1Complete,Survey2Complete,PDR2Complete,PDR3Complete,LENAD1Complete, #LENAD2Complete,Survey3Complete,Survey4Complete,PDR5Complete,PDR6Complete,LENAD3Complete, #LENAD4Complete)
+ # )
+#tbl <- kbl(data, col.names = c("Instrument","Counts")) %>%
+ # kable_styling( bootstrap_options = "striped", full_width = F, position = "float_left", #font_size = 16)
 
 ```
 <center>
@@ -342,16 +342,26 @@ Test11 <- today - Enrollment$LENAD3DiaryActual
 Enrollment1 <- Enrollment %>%
       select(RSID:ConsentCompletion) %>%
       mutate(
-      PreStudyStatus = case_when(
-      Test0 > 5 & is.na(Enrollment$StaffSignature) ~ "Delinquent",
-      Test0 <= 5 & Test >= 2 & is.na(Enrollment$StaffSignature) ~ "Warning",
-      Test0 < 2 & is.na(Enrollment$StaffSignature) ~ "On-Track",
-      Enrollment$StaffSignature > start       ~ "Complete",
+      ConsentStatus = case_when(is.na(Enrollment$InformedConsent) ~ "Delinquent",
+      Enrollment$InformedConsent > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
      )
-Enrollment2 <- Enrollment1 %>%
-      select(RSID:PreStudyStatus) %>%
+
+Enrollment1.1 <- Enrollment1 %>%
+        select(RSID:ConsentStatus) %>%
+      mutate(
+      PostConsentStatus = case_when(
+      Test0 > 7 & is.na(SubInfoActual) ~ "Delinquent",
+      Test0 <= 7 & Test >= 3 & is.na(SubInfoActual) ~ "Warning",
+      Test0 < 3 & is.na(SubInfoActual) ~ "On-Track",
+      SubInfoActual > start       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+
+Enrollment2 <- Enrollment1.1 %>%
+      select(RSID:PostConsentStatus) %>%
       mutate(
       Surv1Status = case_when(
       Test > 14 & is.na(Survey1Actual) ~ "Delinquent",
@@ -490,13 +500,13 @@ Enrollment13 <- Enrollment12%>%
      )
 
 
-Enrollment14 <- gather(Enrollment13, "Instrument", "Status", PreStudyStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
+Enrollment14 <- gather(Enrollment13, "Instrument", "Status", ConsentStatus, PostConsentStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
 library(ggplot2) #load ggplot2 library
 Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "Delinquent", "NA"))
 Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
-Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("PreStudyStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
+Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + # Creates stacked bar chart
-scale_x_discrete(labels=c("PreStudy","Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
+scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
 scale_fill_manual(values = c("darkgrey","brown1","darkgreen" ), labels = c("NA", "Delinquent","Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
@@ -506,7 +516,7 @@ p
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = c("PreStudy", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
+rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Delinquent", "NA")) %>%
         kable_minimal()
