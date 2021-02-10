@@ -65,6 +65,8 @@ Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Re
 #rSEAL Test Consent Data
 Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Test.xlsx', 'Sheet1'))
 
+LENATracker <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
+
 #masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 #masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
 
@@ -74,6 +76,8 @@ Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Re
 #Format Dates for Consent Data
 Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
 Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%m/%d/%Y")
+LENATracker$LENA1Expected <- as.Date(LENATracker$ExpectedDt1 , "%Y-%m-%d")
+LENATracker$LENA2Expected <- as.Date(LENATracker$ExpectedDt2 , "%Y-%m-%d")
 
 # Format dates
 masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
@@ -144,7 +148,12 @@ Consents2 <- data.frame("RSID" = Consents2$RSID,
                         "Recontact" = Consents2$Recontact,
                         "StaffSignature"= Consents2$Staff.Signature)
 
+LENATracker <- data.frame("RSID" = LENATracker$RSID,
+                        "LENA1Expected" = LENATracker$LENA1Expected,
+                        "LENA2Expected"= LENATracker$LENA2Expected)
+
 EnrollmentConsents <- left_join(Consents1,Consents2)
+EnrollmentConsents <- right_join(EnrollmentConsents,LENATracker)
 library(dplyr)
 Enrollment <- full_join(Enrollment, EnrollmentConsents)
 ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", "Complete", "Incomplete")
@@ -285,13 +294,13 @@ This chart shows the combination of completions for the dyads across Waves 1 and
 par(mar = c(4, 4, .2, .1))
 
 
-Wave1_Progression <- Enrollment %>%
+Wave_Progression <- Enrollment %>%
   dplyr::mutate(month = format(SubInfoActual, "%m")) %>%
   dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD4DiaryCompletion) %>%
   dplyr::summarize(Count = n())
  
 library(kableExtra)
-  kable(Wave1_Progression,
+  kable(Wave_Progression,
         col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3","Survey 4","PDR 5", "PDR 6", "LENA D3 Diary", "LENA D4 Diary","Number Complete")) %>%
         kable_minimal()
 
@@ -348,21 +357,21 @@ par(mar = c(4, 4, .2, .1))
 
 ```
 <center>
-**Wave 1 and 2 Participant Progression **  
+**Participant Progression **  
 This chart shows the number of participants complete with each survey instrument across Wave 1 and 2. This does not currently capture those who have dropped out (but can/will). 
 <center>
 ::: {}
 ```{r SEAL Wave 1 Progression, echo = FALSE, fig.width=10, fig.height=4, message=FALSE, warning=FALSE}
 Enrollment$Surv1CompletionTime<- round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
-today <- Sys.time()
+today <- as.Date(Sys.time())
 start <- as.Date("2020-07-01")
 Test0 <- today - Enrollment$Informed.Consent
 Test <- today - Enrollment$SubInfoActual
 Test1 <- today - Enrollment$Survey1Actual
 Test2 <- today - Enrollment$Survey2Actual
 Test3 <- today - Enrollment$PDR2Actual
-Test4 <- today - Enrollment$PDR3Actual
-Test5 <- today - Enrollment$LENAD1DiaryActual
+Test4 <- today - Enrollment$LENA1Expected
+Test5 <- today - Enrollment$LENA2Expected
 Test6 <- today - Enrollment$LENAD2DiaryActual
 Test7 <- today - Enrollment$Survey3Actual
 Test8 <- today - Enrollment$Survey4Actual
@@ -530,14 +539,18 @@ Enrollment13 <- Enrollment12%>%
      )
 
 
-Enrollment14 <- gather(Enrollment13, "Instrument", "Status", ConsentStatus, PostConsentStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus,)
+Enrollment14 <- gather(Enrollment13, "Instrument", "Status", ConsentStatus, PostConsentStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus)
 library(ggplot2) #load ggplot2 library
-Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "Delinquent", "NA"))
+Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "Delinquent", "NA", "On-Track", "Warning"))
+Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "NA", after = Inf)
+Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "On-Track", after = 1)
+Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Warning", after = 2)
 Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
 Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
+
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
-scale_fill_manual(values = c("darkgrey","brown1","darkgreen" ), labels = c("NA", "Delinquent","Complete")) #Manually assigns colors
+scale_fill_manual(values = c("#bdbdbd","#e31a1c","#ffff99", "#1f78b4", "#33a02c" ), labels = c("NA", "Delinquent","Warning", "On-Track", "Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
@@ -548,7 +561,7 @@ Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument",
 library(kableExtra)
 rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
-        col.names = c("Complete","Delinquent", "NA")) %>%
+        col.names = c("Complete","On-Track", "Warning","Delinquent", "NA")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 Wave1Counts
