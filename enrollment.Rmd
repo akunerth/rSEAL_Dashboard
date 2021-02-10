@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 1/28/2021"
+date: "Last Updated: 2/9/2021"
 output: 
   html_document:
     theme: flatly
@@ -185,21 +185,16 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 <center>
 
 <div class="btn-group btn-group-justified">
- <div class="btn-group">
-<a href="#" class="btn">**Pre-Study Complete**<br>TBD</a>
-  </div>
- <div class="btn-group">
-<a href="#" class="btn">**Pre-Study In Progress**<br>TBD</a>
-  </div>
-</div>
-
-<div class="btn-group btn-group-justified">
- <div class="btn-group">
+  <div class="btn-group">
 <a href="#" class="btn btn-default">**Post-Consent Complete**<br>`r PostConsentComp`</a>
   </div>
   
   <div class="btn-group">
 <a href="#" class="btn btn-default">**Post-Consent In Progress**<br>`r PostConsentInProg`</a>
+  </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-default">**Post-Consent Drop-Outs**<br>TBD</a>
   </div>
   
 </div>
@@ -213,6 +208,10 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 <a href="#" class="btn btn-primary">**Wave 1 In Progress**<br>`r Wv1InProg`</a>
   </div>
   
+  <div class="btn-group">
+<a href="#" class="btn btn-primary">**Wave 1 Drop-Outs**<br>TBD</a>
+  </div>
+  
 </div>
 
 <div class="btn-group btn-group-justified">
@@ -222,6 +221,11 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
  <div class="btn-group">
 <a href="#" class="btn btn-success">**Intervention In Progress**<br>`r IntvInProg`</a>
   </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-success">**Intervention Drop-Outs**<br>TBD</a>
+  </div>
+  
 </div>
 
 <div class="btn-group btn-group-justified">
@@ -231,6 +235,11 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
  <div class="btn-group">
 <a href="#" class="btn btn-info">**Wave 2 In Progress**<br>`r Wv2InProg`</a>
   </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-info">**Wave 2 Drop-Outs**<br>TBD</a>
+  </div>
+  
 </div>
 
 <div class="btn-group btn-group-justified">
@@ -240,15 +249,25 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
  <div class="btn-group">
 <a href="#" class="btn btn-warning">**Wave 3 In Progress**<br>TBD</a>
   </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-warning">**Wave 3 Drop-Outs**<br>TBD</a>
+  </div>
+  
 </div>
 
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Study Complete**<br>TBD</a>
+<a href="#" class="btn btn-danger">**Total Complete**<br>TBD</a>
   </div>
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Study In Progress**<br>TBD</a>
+<a href="#" class="btn btn-danger">**Total In Progress**<br>TBD</a>
   </div>
+  
+  <div class="btn-group">
+<a href="#" class="btn btn-danger">**Total Drop-Outs**<br>TBD</a>
+  </div>
+  
 </div>
 
 </div>
@@ -530,7 +549,8 @@ library(kableExtra)
 rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Delinquent", "NA")) %>%
-        kable_minimal()
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
 Wave1Counts
 ```
 :::
