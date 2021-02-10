@@ -190,6 +190,7 @@ Wv2Comp <- length(grep("TRUE", Wv2Comp))
 Wv2InProg<- (is.na(LENAD4DiaryCompletion) & Survey3Completion == "Complete")
 Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
+TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
 ```
 <center>
 
@@ -267,10 +268,10 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
 <div class="btn-group btn-group-justified">
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Total Complete**<br>TBD</a>
+<a href="#" class="btn btn-danger">**Total Complete with Study**<br>TBD</a>
   </div>
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Total In Progress**<br>TBD</a>
+<a href="#" class="btn btn-danger">**Total In Progress**<br>`r TotalInProg`</a>
   </div>
   
   <div class="btn-group">
