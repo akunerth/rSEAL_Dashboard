@@ -647,15 +647,15 @@ Enrollment14 <- gather(Enrollment13, "Instrument", "Status", ConsentStatus, Post
 library(ggplot2) #load ggplot2 library
 Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "On-Track", "NA", "Warning",  "Delinquent", "Opt-Out"))
 Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "NA", after = Inf)
-#Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "On-Track", after = 2)
-#Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Warning", after = 3)
+Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Delinquent", after = 4)
+Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Warning", after = 3)
 #Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Opt-Out", after = 2)
 Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
 Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
 
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + # Creates stacked bar chart
 scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
-scale_fill_manual(values = c("#bdbdbd","#737373","#e31a1c","#ffff99", "#1f78b4", "#33a02c" ), labels = c("NA", "Opt-Out","Delinquent","Warning", "On-Track", "Complete")) #Manually assigns colors
+scale_fill_manual(values = c("#bdbdbd","#e31a1c", "#ffff99","#737373","#1f78b4", "#33a02c" ), labels = c("NA", "Delinquent","Warning", "Opt-Out","On-Track", "Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
@@ -666,7 +666,7 @@ Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument",
 library(kableExtra)
 rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
 Wave1Counts <- kable(Wave1,
-        col.names = c("Complete","On-Track", "Warning","Delinquent","Opt-Out", "NA")) %>%
+        col.names = c("Complete","On-Track", "Opt-Out","Warning","Delinquent", "NA")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 Wave1Counts
