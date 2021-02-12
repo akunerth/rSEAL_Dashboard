@@ -63,7 +63,7 @@ masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL 
 Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
 
 #rSEAL Test Consent Data
-Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Test.xlsx', 'Sheet1'))
+Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
 
 #Read in LENA Tracker for Expected Dates
 LENATracker <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
