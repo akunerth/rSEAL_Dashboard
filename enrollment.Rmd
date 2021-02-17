@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 2/9/2021"
+date: "Last Updated: 2/16/2021"
 output: 
   html_document:
     theme: flatly
@@ -59,6 +59,10 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 library(haven)
 masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/masterfile.sav'))
 
+LENADataW1 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W1"))
+
+LENADataW2 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W2"))
+
 #rSEAL Manual Consent Data
 Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
 
@@ -70,6 +74,9 @@ LENATracker <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_R
 
 #Read in Case Progression Log
 CaseProg <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/rSEAL Case Progression Log.csv'))
+
+#Read in Coach Impressions
+CoachImp <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Coach_Impressions_Form.csv'))
 
 #masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 #masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
@@ -114,8 +121,15 @@ CaseProg$Q2_21_TEXT <- as.Date(CaseProg$Q2_21_TEXT,"%m/%d/%y")
 CaseProg$Q2_22_TEXT <- as.Date(CaseProg$Q2_22_TEXT,"%m/%d/%y")                       
 CaseProg$Q2_23_TEXT <- as.Date(CaseProg$Q2_23_TEXT,"%m/%d/%y")                      
 CaseProg$Q2_24_TEXT <- as.Date(CaseProg$Q2_24_TEXT,"%m/%d/%y")
-CaseProg$Q9 <- as.Date(CaseProg$Q9,"%m/%d/%y")
 CaseProg$Q10 <- as.Date(CaseProg$Q10,"%m/%d/%y")
+CoachImp$StartDate <- as.Date(CoachImp$StartDate,"%m/%d/%y")
+CoachImp$EndDate <- as.Date(CoachImp$EndDate,"%m/%d/%y")
+CoachImp$RecordedDate <- as.Date(CoachImp$RecordedDate,"%m/%d/%y")
+
+#Remove rows without cases
+library(dplyr)
+CaseProg <- CaseProg %>% slice(-c(1,2))
+CoachImp <- CoachImp %>% slice(-c(1,2))
 
 #Classify Tests
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
@@ -176,6 +190,14 @@ LENATracker <- data.frame("RSID" = LENATracker$RSID,
                         "LENA1Expected" = LENATracker$LENA1Expected,
                         "LENA2Expected"= LENATracker$LENA2Expected)
 
+LENADataW1 <- data.frame("RSID" = LENADataW1$RSID,
+                        "LENAD1DataW1" = LENADataW1$FullHours_D1,
+                        "LENAD2DataW1"= LENADataW1$FullHours_D2)
+
+LENADataW2 <- data.frame("RSID" = LENADataW2$RSID,
+                        "LENAD1DataW2" = LENADataW2$FullHours_D1,
+                        "LENAD2DataW2"= LENADataW2$FullHours_D2)
+
 CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
                         "Survey1_OptOut" = CaseProg$Q2_1_TEXT,
                         "Survey2_OptOut" = CaseProg$Q2_2_TEXT,
@@ -197,16 +219,29 @@ CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
                         "LENAW3D2Log_OptOut" = CaseProg$Q2_24_TEXT,
                         "DropOutStage" = CaseProg$Q9,
                         "DropOutDate" = CaseProg$Q10)
-#Remove rows without cases
-library(dplyr)
-CaseProg <- CaseProg %>% slice(-c(1,2))
+
+CoachImp <- data.frame("RSID" = CoachImp$RSID,
+                        "CoachImpComplete" = CoachImp$RecordedDate)
+
 
 EnrollmentConsents <- full_join(Consents1,Consents2)
+EnrollmentConsents <- full_join(EnrollmentConsents,CoachImp)
+EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
+EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENATracker)
 EnrollmentConsents <- full_join(EnrollmentConsents,CaseProg)
 library(dplyr)
-Enrollment <- full_join(EnrollmentConsents, Enrollment)
+Enrollment <- left_join(EnrollmentConsents, Enrollment)
+
+#Classify Tests
 ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", "Complete", "Incomplete")
+Enrollment$LENAD1DataCompletion <- ifelse(Enrollment$LENAD1DataW1  > 0, "Complete", "Incomplete")
+Enrollment$LENAD2DataCompletion <- ifelse(Enrollment$LENAD2DataW1 > 0, "Complete", "Incomplete")
+Enrollment$LENAD3DataCompletion <- ifelse(Enrollment$LENAD1DataW2  > 0, "Complete", "Incomplete")
+Enrollment$LENAD4DataCompletion <- ifelse(Enrollment$LENAD2DataW2   > 0, "Complete", "Incomplete")
+Enrollment$CoachImpCompletion <- ifelse(Enrollment$CoachImpComplete > "2020-07-01", "Complete", "Incomplete")
+
+
 ```
 
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
@@ -224,6 +259,9 @@ PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
 Wv1Comp<- (ConsentCompletion == "Complete" & LENAD2DiaryCompletion == "Complete")
 Wv1Comp <- length(grep("TRUE", Wv1Comp))
 
+Wv1DropOut <- (CaseProg$DropOutStage == 1)
+Wv1DropOut <- length(grep("TRUE", Wv1DropOut))
+
 Wv1InProg<- (is.na(LENAD2DiaryCompletion) & ConsentCompletion == "Complete")
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
 
@@ -234,13 +272,24 @@ IntvComp <- length(grep("TRUE", IntvComp))
 IntvInProg<- (is.na(Survey3Completion) & LENAD2DiaryCompletion == "Complete")
 IntvInProg <- length(grep("TRUE", IntvInProg))
 
+IntvDropOut <- (CaseProg$DropOutStage == 2)
+IntvDropOut <- length(grep("TRUE", IntvDropOut))
+
 Wv2Comp<- (LENAD4DiaryCompletion == "Complete")
 Wv2Comp <- length(grep("TRUE", Wv2Comp))
 
 Wv2InProg<- (is.na(LENAD4DiaryCompletion) & Survey3Completion == "Complete")
 Wv2InProg <- length(grep("TRUE", Wv2InProg))
 
-TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
+Wv2DropOut <- (CaseProg$DropOutStage == 3)
+Wv2DropOut <- length(grep("TRUE", Wv2DropOut))
+
+Wv3DropOut <- (CaseProg$DropOutStage == 4)
+Wv3DropOut <- length(grep("TRUE", Wv3DropOut))
+
+TotalInProg<- sum(PostConsentInProg,Wv1InProg,IntvInProg, Wv2InProg)
+TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
+
 ```
 <center>
 
@@ -251,10 +300,6 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
   
   <div class="btn-group">
 <a href="#" class="btn btn-default">**Post-Consent In Progress**<br>`r PostConsentInProg`</a>
-  </div>
-  
-  <div class="btn-group">
-<a href="#" class="btn btn-default">**Post-Consent Drop-Outs**<br>TBD</a>
   </div>
   
 </div>
@@ -269,7 +314,7 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-primary">**Wave 1 Drop-Outs**<br>TBD</a>
+<a href="#" class="btn btn-primary">**Wave 1 Drop-Outs**<br> `r Wv1DropOut` </a>
   </div>
   
 </div>
@@ -283,7 +328,7 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-success">**Intervention Drop-Outs**<br>TBD</a>
+<a href="#" class="btn btn-success">**Intervention Drop-Outs**<br>`r IntvDropOut` </a>
   </div>
   
 </div>
@@ -297,7 +342,7 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-info">**Wave 2 Drop-Outs**<br>TBD</a>
+<a href="#" class="btn btn-info">**Wave 2 Drop-Outs**<br>`r Wv2DropOut` </a>
   </div>
   
 </div>
@@ -311,7 +356,7 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-warning">**Wave 3 Drop-Outs**<br>TBD</a>
+<a href="#" class="btn btn-warning">**Wave 3 Drop-Outs**<br>`r Wv3DropOut` </a>
   </div>
   
 </div>
@@ -321,11 +366,11 @@ TotalInProg<- sum(PostConsentInProg,Wv1InProg,Wv2InProg, Wv2InProg)
 <a href="#" class="btn btn-danger">**Total Complete with Study**<br>TBD</a>
   </div>
  <div class="btn-group">
-<a href="#" class="btn btn-danger">**Total In Progress**<br>`r TotalInProg`</a>
+<a href="#" class="btn btn-danger">**Total In Progress**<br> `r TotalInProg` </a>
   </div>
   
   <div class="btn-group">
-<a href="#" class="btn btn-danger">**Total Drop-Outs**<br>TBD</a>
+<a href="#" class="btn btn-danger">**Total Drop-Outs**<br>`r TotalDropOuts`</a>
   </div>
   
 </div>
@@ -347,12 +392,12 @@ par(mar = c(4, 4, .2, .1))
 
 Wave_Progression <- Enrollment %>%
   dplyr::mutate(month = format(SubInfoActual, "%m")) %>%
-  dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD2DiaryCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD4DiaryCompletion) %>%
+  dplyr::group_by(Survey1Completion, Survey2Completion, PDR2Completion, PDR3Completion, LENAD1DiaryCompletion, LENAD1DataCompletion, LENAD2DiaryCompletion, LENAD2DataCompletion, CoachImpCompletion, Survey3Completion, Survey4Completion, PDR5Completion, PDR6Completion, LENAD3DiaryCompletion, LENAD3DataCompletion, LENAD4DiaryCompletion, LENAD4DataCompletion,) %>%
   dplyr::summarize(Count = n())
  
 library(kableExtra)
   kable(Wave_Progression,
-        col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3","Survey 4","PDR 5", "PDR 6", "LENA D3 Diary", "LENA D4 Diary","Number Complete")) %>%
+        col.names = c("Survey 1","Survey 2","PDR 2", "PDR 3", "LENA D1 Diary", "LENA D1 Data", "LENA D2 Diary", "LENA D2 Data", "Intervention","Survey 3","Survey 4","PDR 5", "PDR 6", "LENA D3 Diary", "LENA D3 Data","LENA D4 Diary","LENA D4 Data", "Number Complete")) %>%
         kable_minimal()
 
 ```
@@ -422,13 +467,15 @@ Test1 <- today - Enrollment$Survey1Actual
 Test2 <- today - Enrollment$Survey2Actual
 Test3 <- today - Enrollment$PDR2Actual
 Test4 <- today - Enrollment$LENA1Expected
+Test4.1 <- today - Enrollment$LENAD1DiaryActual
 Test5 <- today - Enrollment$LENA2Expected
-Test6 <- today - Enrollment$LENAD2DiaryActual
+Test6 <- today - Enrollment$CoachImpComplete
 Test7 <- today - Enrollment$Survey3Actual
 Test8 <- today - Enrollment$Survey4Actual
 Test9 <- today - Enrollment$PDR5Actual
 Test10 <- today - Enrollment$PDR6Actual
 Test11 <- today - Enrollment$LENAD3DiaryActual
+Test11.1 <- today - Enrollment$LENAD4DiaryActual
 Enrollment1 <- Enrollment %>%
       select(RSID:Surv1CompletionTime) %>%
       mutate(
@@ -538,8 +585,24 @@ Enrollment6 <- Enrollment5%>%
       TRUE                      ~ "NA"
       )
      )
-Enrollment7 <- Enrollment6%>%
+Enrollment6.1 <- Enrollment6%>%
       select(RSID:LENAD1DiaryStatus) %>%
+      mutate(
+      LENAD1DataStatus = case_when(
+      Test4.1 > 7 & is.na(LENAD1DataW1) ~ "Delinquent",
+      Test4.1 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW1) ~ "Warning",
+      Test4.1 < 3 & is.na(LENAD1DataW1) ~ "On-Track",
+      DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
+      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
+      PDRW1D3_OptOut > start  ~ "Opt-Out",
+      LENAD2DiaryActual > start & is.na(LENAD1DataW1) ~ "Delinquent",
+      LENAD1DataW1 > 0       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+
+Enrollment7 <- Enrollment6.1%>%
+      select(RSID:LENAD1DataStatus) %>%
       mutate(
       LENAD2DiaryStatus = case_when(
       Test5 > 3 & is.na(LENAD2DiaryActual) ~ "Delinquent",
@@ -558,13 +621,29 @@ Enrollment7 <- Enrollment6%>%
       )
      )
 
-Enrollment8 <- Enrollment7%>%
+Enrollment7.1 <- Enrollment7%>%
       select(RSID:LENAD2DiaryStatus) %>%
       mutate(
+      LENAD2DataStatus = case_when(
+      Test6 > 7 & is.na(LENAD2DataW1) ~ "Delinquent",
+      Test6 <= 7 & Test4.1 >= 3 & is.na(LENAD2DataW1) ~ "Warning",
+      Test6 < 3 & is.na(LENAD2DataW1) ~ "On-Track",
+      DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
+      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
+      PDRW1D3_OptOut > start  ~ "Opt-Out",
+      LENAD2DiaryActual > start & is.na(LENAD2DataW1) ~ "Delinquent",
+      LENAD2DataW1 > 0       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+
+Enrollment8 <- Enrollment7.1%>%
+      select(RSID:LENAD2DataStatus) %>%
+      mutate(
       Surv3Status = case_when(
-      Test6 > 90 & is.na(Survey3Actual) ~ "Delinquent",
-      Test6 <= 90 & Test6 >= 70 & is.na(Survey3Actual) ~ "Warning",
-      Test6 < 70 & is.na(Survey3Actual) ~ "On-Track",
+      Test6 > 7 & is.na(Survey3Actual) ~ "Delinquent",
+      Test6 <= 7 & Test6 >= 3 & is.na(Survey3Actual) ~ "Warning",
+      Test6 < 3 & is.na(Survey3Actual) ~ "On-Track",
       DropOutDate > start & is.na(Survey3Actual) ~ "Opt-Out",
       Survey3_OptOut > start  ~ "Opt-Out",
       Survey4Actual > start & is.na(Survey3Actual) ~ "Delinquent",
@@ -642,9 +721,23 @@ Enrollment12 <- Enrollment11%>%
       TRUE                      ~ "NA"
       )
      )
-
-Enrollment13 <- Enrollment12%>%
+Enrollment12.1 <- Enrollment12%>%
       select(RSID:LENAD3DiaryStatus) %>%
+      mutate(
+      LENAD3DataStatus = case_when(
+      Test11 > 7 & is.na(LENAD1DataW2) ~ "Delinquent",
+      Test11 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW2) ~ "Warning",
+      Test11 < 3 & is.na(LENAD1DataW2) ~ "On-Track",
+      DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
+      LENAW2D1Log_OptOut > start  ~ "Opt-Out",
+      PDRW2D3_OptOut > start  ~ "Opt-Out",
+      LENAD3DiaryActual > start & is.na(LENAD1DataW2) ~ "Delinquent",
+      LENAD1DataW2 > 0       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+Enrollment13 <- Enrollment12.1%>%
+      select(RSID:LENAD3DataStatus) %>%
       mutate(
       LENAD4DiaryStatus = case_when(
       Test11 > 3 & is.na(LENAD4DiaryActual) ~ "Delinquent",
@@ -656,7 +749,24 @@ Enrollment13 <- Enrollment12%>%
       TRUE                      ~ "NA"
       )
      )
-Enrollment14 <- gather(Enrollment13, "Instrument", "Status", ConsentStatus, PostConsentStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD2DiaryStatus,Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD4DiaryStatus)
+
+Enrollment13.1 <- Enrollment13%>%
+      select(RSID:LENAD4DiaryStatus) %>%
+      mutate(
+      LENAD4DataStatus = case_when(
+      Test11.1 > 7 & is.na(LENAD2DataW2) ~ "Delinquent",
+      Test11.1 <= 7 & Test11.1 >= 3 & is.na(LENAD2DataW2) ~ "Warning",
+      Test11.1 < 3 & is.na(LENAD2DataW2) ~ "On-Track",
+      DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
+      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
+      PDRW1D3_OptOut > start  ~ "Opt-Out",
+      LENAD2DiaryActual > start & is.na(LENAD2DataW2) ~ "Delinquent",
+      LENAD2DataW2 > 0       ~ "Complete",
+      TRUE                      ~ "NA"
+      )
+     )
+
+Enrollment14 <- gather(Enrollment13.1, "Instrument", "Status", ConsentStatus, PostConsentStatus, Surv1Status, Surv2Status,PDR2Status, PDR3Status,LENAD1DiaryStatus,LENAD1DataStatus, LENAD2DiaryStatus,LENAD2DataStatus, Surv3Status, Surv4Status,PDR5Status, PDR6Status,LENAD3DiaryStatus,LENAD3DataStatus, LENAD4DiaryStatus, LENAD4DataStatus)
 library(ggplot2) #load ggplot2 library
 Enrollment14$Status <- factor(Enrollment14$Status, levels = c("Complete", "On-Track", "NA", "Warning",  "Delinquent", "Opt-Out"))
 Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "NA", after = Inf)
@@ -664,10 +774,10 @@ Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Delinquent", a
 Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Warning", after = 3)
 #Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Opt-Out", after = 2)
 Enrollment14$Cases <- factor(Enrollment14$RSID) # Create a categorical variable
-Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD2DiaryStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD4DiaryStatus")) # Create categorical variable
+Enrollment14$Instrument <- factor(Enrollment14$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD1DataStatus","LENAD2DiaryStatus","LENAD2DataStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD3DataStatus", "LENAD4DiaryStatus", "LENAD4DataStatus")) # Create categorical variable
 
 p <- ggplot(data = Enrollment14, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + # Creates stacked bar chart
-scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")) +
+scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")) +
 scale_fill_manual(values = c("#bdbdbd","#e31a1c", "#ffff99","#737373","#1f78b4", "#33a02c" ), labels = c("NA", "Delinquent","Warning", "Opt-Out","On-Track", "Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
@@ -677,7 +787,7 @@ p
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 Wave1 <- table(Enrollment14$Instrument, Enrollment14$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D2 Diary", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D4 Diary")
+rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data", "LENA D2 Diary", "LENA D2 Data","Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","On-Track", "Opt-Out","Warning","Delinquent", "NA")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
