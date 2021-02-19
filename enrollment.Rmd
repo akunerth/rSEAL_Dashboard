@@ -298,7 +298,7 @@ TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
 
 ```
 <center>
-<div class="btn-group">
+<div class="btn-group btn-group-justified">
 <button type="button" class="btn btn-dark">**Consents Complete**<br>`r ConsentComp`</button>
 </div>
   
