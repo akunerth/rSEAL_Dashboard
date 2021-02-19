@@ -62,20 +62,25 @@ LENADataW2 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projec
 #rSEAL Manual Consent Data
 Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
 #rSEAL Test Consent Data
-Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
+library(haven)
+Consents2 <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.sav'))
+Consents2 <- subset(Consents2, select = -c(2:17))
+Consents2$recontact <- as.numeric(Consents2$recontact)
+#Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
+
 #Read in LENA Tracker for Expected Dates
 LENATracker <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
 #Read in Case Progression Log
-CaseProg <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/rSEAL Case Progression Log.csv'))
+CaseProg <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Case_Progression_Log.sav'))
 #Read in Coach Impressions
-CoachImp <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Coach_Impressions_Form.csv'))
+CoachImp <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Coach_Impressions_Form.sav'))
 #masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 #masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
 #masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
 #masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
 #Format Dates for Consent Data
-Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
-Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%m/%d/%Y")
+#Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
+#Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%m/%d/%Y")
 LENATracker$LENA1Expected <- as.Date(LENATracker$ExpectedDt1 , "%Y-%m-%d")
 LENATracker$LENA2Expected <- as.Date(LENATracker$ExpectedDt2 , "%Y-%m-%d")
 # Format dates
@@ -114,6 +119,7 @@ CaseProg$Q10 <- as.Date(CaseProg$Q10,"%m/%d/%y")
 CoachImp$StartDate <- as.Date(CoachImp$StartDate,"%m/%d/%y")
 CoachImp$EndDate <- as.Date(CoachImp$EndDate,"%m/%d/%y")
 CoachImp$RecordedDate <- as.Date(CoachImp$RecordedDate,"%m/%d/%y")
+
 #Remove rows without cases
 library(dplyr)
 CaseProg <- CaseProg %>% slice(-c(1,2))
@@ -138,6 +144,12 @@ PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "202
 LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$LENAD3Start > "2020-07-01", "Complete", "Incomplete")
 LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion <- ifelse(masterfile$LENAD4Start > "2020-07-01", "Complete", "Incomplete")
 CoachImpCompletion <- CoachImp$CoachImpCompletion <- ifelse(CoachImp$RecordedDate > "2020-07-01", "Complete", "Incomplete")
+Staff.Signature <- Consents2$Staff.Signature <- ifelse(Consents2$Completed == "2",(as.character(Consents2$StartDate)), "NA")
+Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature,"%Y-%m-%d" )
+Informed.consent <- Consents2$Informed.consent <- ifelse(Consents2$Completed == "1",(as.character(Consents2$StartDate)), "NA")
+Consents2$Informed.consent <- as.Date(Consents2$Informed.consent,"%Y-%m-%d" )
+Recontact <- Consents2$recontact <- ifelse(Consents2$recontact == 1 ,"Signed", "NA")
+
 #Create new DataFrame for Enrollment Table
 Enrollment <- data.frame("RSID" = masterfile$RSID,
                         "SubInfoActual"=masterfile$SubInfoStart,
@@ -172,8 +184,27 @@ Consents1 <- data.frame("RSID" = Consents1$RSID,
                         "StaffSignature"= Consents1$Staff.Signature)
 Consents2 <- data.frame("RSID" = Consents2$RSID,
                         "Informed Consent"= Consents2$Informed.consent, 
-                        "Recontact" = Consents2$Recontact,
+                        "Recontact" = Consents2$recontact,
                         "StaffSignature"= Consents2$Staff.Signature)
+#Select/merge consent data to align to just one case
+Consents2.1 <- Consents2[rowSums(is.na(Consents2)) < 3, ]
+Consents2.2 <- Consents2.1[match(unique(Consents2.1$Informed.Consent), Consents2.1$Informed.Consent),]
+Consents2.3 <- data.frame("RSID" = Consents2.2$RSID,
+                        "Informed Consent"= Consents2.2$Informed.Consent)
+Consents2.4 <- Consents2.1[match(unique(Consents2.1$StaffSignature), Consents2.1$StaffSignature),]
+Consents2.5 <- data.frame("RSID" = Consents2.4$RSID,
+                        "StaffSignature"= Consents2.4$StaffSignature)
+Consents2.6 <- Consents2.5[!is.na(Consents2.5[, 2]), ]
+Consents2.7 <- Consents2.3[!is.na(Consents2.3[, 2]), ]
+
+Consents4 <- Consents2.1[!is.na(Consents2.1[, 3]), ]
+Consents4.2 <- Consents4[match(unique(Consents4$RSID), Consents4$RSID),]
+Consents4.3 <- data.frame("RSID" = Consents4.2$RSID,
+                        "Recontact"= Consents4.2$Recontact)
+
+Consents3 <- full_join(Consents2.6,Consents2.7)
+Consents5 <- left_join(Consents3,Consents4.3)
+
 LENATracker <- data.frame("RSID" = LENATracker$RSID,
                         "LENA1Expected" = LENATracker$LENA1Expected,
                         "LENA2Expected"= LENATracker$LENA2Expected)
@@ -207,7 +238,7 @@ CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
 CoachImp <- data.frame("RSID" = CoachImp$RSID,
                         "CoachImpComplete" = CoachImp$RecordedDate,
                         "CoachImpCompletion" = CoachImp$CoachImpCompletion)
-EnrollmentConsents <- full_join(Consents1,Consents2)
+EnrollmentConsents <- full_join(Consents1,Consents5)
 EnrollmentConsents <- full_join(EnrollmentConsents,CoachImp)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
@@ -733,10 +764,9 @@ Enrollment15$Instrument <- factor(Enrollment15$Instrument, levels = c("ConsentSt
 p <- ggplot(data = Enrollment15, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + 
 # Creates stacked bar chart
 scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")) +
-scale_fill_manual(values = rev(c("#33a02c","#737373" ,"#1f78b4","#e31a1c","#bdbdbd" #"#ffff99"
-                                  
-                             )), labels = rev(c("Complete", "Opt-Out", "On-Track", #"Warning",  
-                                            "Delinquent", "NA"))) #Manually assigns colors
+scale_fill_manual(values = c("#e31a1c","#737373" ,"#bdbdbd", "#1f78b4","#33a02c" #"#ffff99"
+                             ), labels = c("NA", "On-Track", "Opt-Out",  #"Warning",  
+                                            "Delinquent", "Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
