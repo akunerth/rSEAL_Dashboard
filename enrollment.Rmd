@@ -141,14 +141,14 @@ Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1St
 Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
 PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > "2020-07-01", "Complete", "Incomplete")
 PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", "Complete", "Incomplete")
-LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$rSEAL.C1.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$rSEAL.C1.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- ifelse(masterfile$LENAD1Start > "2020-07-01", "Complete", "Incomplete")
+LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$LENAD2Start > "2020-07-01", "Complete", "Incomplete")
 Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > "2020-07-01", "Complete", "Incomplete")
 Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > "2020-07-01", "Complete", "Incomplete")
 PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
 PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
-LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$LENAD3Start > "2020-07-01", "Complete", "Incomplete")
+LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion <- ifelse(masterfile$LENAD4Start > "2020-07-01", "Complete", "Incomplete")
 CoachImpCompletion <- CoachImp$CoachImpCompletion <- ifelse(CoachImp$RecordedDate > "2020-07-01", "Complete", "Incomplete")
 
 #Create new DataFrame for Enrollment Table
