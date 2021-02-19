@@ -135,6 +135,7 @@ CoachImp <- CoachImp %>% slice(-c(1,2))
 CaseProg <- CaseProg %>% slice(-c(45))
 
 #Classify Tests
+ConsentCompletion <- masterfile$ConsentCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
 Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > "2020-07-01", "Complete", "Incomplete")
 Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > "2020-07-01", "Complete", "Incomplete")
@@ -239,7 +240,7 @@ library(dplyr)
 Enrollment <- left_join(EnrollmentConsents, Enrollment)
 
 #Classify Tests
-ConsentCompletion <- Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", "Complete", "Incomplete")
+Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", "Complete", "Incomplete")
 Enrollment$LENAD1DataCompletion <- ifelse(Enrollment$LENAD1DataW1  > 0, "Complete", "Incomplete")
 Enrollment$LENAD2DataCompletion <- ifelse(Enrollment$LENAD2DataW1 > 0, "Complete", "Incomplete")
 Enrollment$LENAD3DataCompletion <- ifelse(Enrollment$LENAD1DataW2  > 0, "Complete", "Incomplete")
@@ -297,7 +298,10 @@ TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
 
 ```
 <center>
-
+<div class="btn-group">
+<button type="button" class="btn btn-dark">**Consents Complete**<br>`r ConsentComp`</button>
+</div>
+  
 <div class="btn-group btn-group-justified">
   <div class="btn-group">
 <a href="#" class="btn btn-default">**Post-Consent Complete**<br>`r PostConsentComp`</a>
