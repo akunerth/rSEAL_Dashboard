@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 2/16/2021"
+date: "Last Updated: 2/17/2021"
 output: 
   html_document:
     theme: flatly
@@ -91,6 +91,7 @@ LENATracker$LENA1Expected <- as.Date(LENATracker$ExpectedDt1 , "%Y-%m-%d")
 LENATracker$LENA2Expected <- as.Date(LENATracker$ExpectedDt2 , "%Y-%m-%d")
 
 # Format dates
+masterfile$SubInfoStart <- as.Date(masterfile$SubInfoStart, "%Y/%m/%d")
 masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
 masterfile$Survey2Start <- as.Date(masterfile$Survey2Start, "%Y/%m/%d")
 masterfile$PDR2Start <- as.Date(masterfile$PDR2Start, "%Y/%m/%d")
@@ -130,6 +131,8 @@ CoachImp$RecordedDate <- as.Date(CoachImp$RecordedDate,"%m/%d/%y")
 library(dplyr)
 CaseProg <- CaseProg %>% slice(-c(1,2))
 CoachImp <- CoachImp %>% slice(-c(1,2))
+#Remove test response RS200 from CaseProg
+CaseProg <- CaseProg %>% slice(-c(45))
 
 #Classify Tests
 SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
@@ -144,7 +147,8 @@ Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4St
 PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > "2020-07-01", "Complete", "Incomplete")
 PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", "Complete", "Incomplete")
 LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.003 > "2020-07-01", "Complete", "Incomplete")
-LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion<- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion <- ifelse(masterfile$rSEAL.C2.LDL.029 > "2020-07-01", "Complete", "Incomplete")
+CoachImpCompletion <- CoachImp$CoachImpCompletion <- ifelse(CoachImp$RecordedDate > "2020-07-01", "Complete", "Incomplete")
 
 #Create new DataFrame for Enrollment Table
 
@@ -221,7 +225,8 @@ CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
                         "DropOutDate" = CaseProg$Q10)
 
 CoachImp <- data.frame("RSID" = CoachImp$RSID,
-                        "CoachImpComplete" = CoachImp$RecordedDate)
+                        "CoachImpComplete" = CoachImp$RecordedDate,
+                        "CoachImpCompletion" = CoachImp$CoachImpCompletion)
 
 
 EnrollmentConsents <- full_join(Consents1,Consents2)
@@ -269,7 +274,7 @@ Wv1InProg <- length(grep("TRUE", Wv1InProg))
 IntvComp<- (Survey3Completion == "Complete" & LENAD2DiaryCompletion == "Complete")
 IntvComp <- length(grep("TRUE", IntvComp))
 
-IntvInProg<- (is.na(Survey3Completion) & LENAD2DiaryCompletion == "Complete")
+IntvInProg<- (is.na(CoachImpCompletion) & LENAD2DiaryCompletion == "Complete")
 IntvInProg <- length(grep("TRUE", IntvInProg))
 
 IntvDropOut <- (CaseProg$DropOutStage == 2)
