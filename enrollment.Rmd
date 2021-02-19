@@ -133,6 +133,8 @@ CaseProg <- CaseProg %>% slice(-c(1,2))
 CoachImp <- CoachImp %>% slice(-c(1,2))
 #Remove test response RS200 from CaseProg
 CaseProg <- CaseProg %>% slice(-c(45))
+#Remove duplicate response RS039 
+CoachImp <- CoachImp %>% slice(-c(14))
 
 #Classify Tests
 ConsentCompletion <- masterfile$ConsentCompletion <- ifelse(masterfile$SubInfoStart > "2020-07-01", "Complete", "Incomplete")
@@ -272,7 +274,7 @@ Wv1InProg<- (is.na(LENAD2DiaryCompletion) & ConsentCompletion == "Complete")
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
 
 
-IntvComp<- (Survey3Completion == "Complete" & LENAD2DiaryCompletion == "Complete")
+IntvComp<- (CoachImpCompletion == "Complete")
 IntvComp <- length(grep("TRUE", IntvComp))
 
 IntvInProg<- (is.na(CoachImpCompletion) & LENAD2DiaryCompletion == "Complete")
