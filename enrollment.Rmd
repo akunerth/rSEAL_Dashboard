@@ -587,8 +587,9 @@ Wv2InProg <- length(grep("TRUE", Wv2InProg))
 Wv2DropOut <- (Enrollment13.1$DropOutStage == 3)
 Wv2DropOut <- length(grep("TRUE", Wv2DropOut))
 Wv3DropOut <- (Enrollment13.1$DropOutStage == 4)
+Wv3InProg<- Wv2Comp
 Wv3DropOut <- length(grep("TRUE", Wv3DropOut))
-TotalInProg<- sum(Wv1InProg,IntvInProg, Wv2InProg)
+TotalInProg<- sum(Wv1InProg,IntvInProg, Wv2InProg, Wv3InProg)
 TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
 ```
 <center>
@@ -662,7 +663,7 @@ TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
 <a href="#" class="btn btn-warning">**Wave 3 Complete**<br>TBD</a>
   </div>
  <div class="btn-group">
-<a href="#" class="btn btn-warning">**Wave 3 In Progress**<br>TBD</a>
+<a href="#" class="btn btn-warning">**Wave 3 In Progress**<br>`r Wv3InProg`</a>
   </div>
   
   <div class="btn-group">
