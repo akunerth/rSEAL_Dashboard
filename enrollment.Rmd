@@ -239,11 +239,15 @@ CoachImp <- data.frame("RSID" = CoachImp$RSID,
                         "CoachImpComplete" = CoachImp$RecordedDate,
                         "CoachImpCompletion" = CoachImp$CoachImpCompletion)
 EnrollmentConsents <- full_join(Consents1,Consents5)
+#Remove duplicate response from RS018
+EnrollmentConsents <- EnrollmentConsents %>% slice(-c(48))
 EnrollmentConsents <- full_join(EnrollmentConsents,CoachImp)
+#Remove duplicate response from RS039
+EnrollmentConsents <- EnrollmentConsents %>% slice(-c(29))
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
-EnrollmentConsents <- full_join(EnrollmentConsents,LENATracker)
-EnrollmentConsents <- full_join(EnrollmentConsents,CaseProg)
+EnrollmentConsents <- left_join(EnrollmentConsents,LENATracker, by = "RSID")
+EnrollmentConsents <- left_join(EnrollmentConsents,CaseProg, by = "RSID")
 library(dplyr)
 Enrollment <- left_join(EnrollmentConsents, Enrollment)
 #Classify Tests
@@ -252,14 +256,16 @@ Enrollment$LENAD1DataCompletion <- ifelse(Enrollment$LENAD1DataW1  > 0, "Complet
 Enrollment$LENAD2DataCompletion <- ifelse(Enrollment$LENAD2DataW1 > 0, "Complete", "Incomplete")
 Enrollment$LENAD3DataCompletion <- ifelse(Enrollment$LENAD1DataW2  > 0, "Complete", "Incomplete")
 Enrollment$LENAD4DataCompletion <- ifelse(Enrollment$LENAD2DataW2   > 0, "Complete", "Incomplete")
-Enrollment$CoachImpCompletion <- ifelse(Enrollment$CoachImpComplete > "2020-07-01", "Complete", "Incomplete")
+IntvCompletion <- Enrollment$IntvCompletion <- ifelse(Enrollment$CoachImpComplete > "2020-07-01", "Complete", "Incomplete")
 ```
 
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 par(mar = c(4, 4, .2, .1))
-ConsentComp<- (ConsentCompletion == "Complete")
+ConsentComp<- (Enrollment$ConsentCompletion == "Complete")
 ConsentComp <- length(grep("TRUE", ConsentComp))
-PostConsentComp<- (ConsentCompletion == "Complete" & SubInfoCompletion == "Complete")
+ConsentInProg<- (is.na(Enrollment$ConsentCompletion))
+ConsentInProg <- length(grep("TRUE", ConsentInProg))
+PostConsentComp<- (Enrollment$ConsentCompletion == "Complete" & Enrollment$SubInfoCompletion == "Complete")
 PostConsentComp<- length(grep("TRUE", PostConsentComp))
 PostConsentInProg<- (ConsentCompletion == "Complete" & is.na(SubInfoCompletion))
 PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
@@ -269,9 +275,9 @@ Wv1DropOut <- (CaseProg$DropOutStage == 1)
 Wv1DropOut <- length(grep("TRUE", Wv1DropOut))
 Wv1InProg<- (is.na(LENAD2DiaryCompletion) & ConsentCompletion == "Complete")
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
-IntvComp<- (CoachImpCompletion == "Complete")
-IntvComp <- length(grep("TRUE", IntvComp))
-IntvInProg<- (is.na(CoachImpCompletion) & LENAD2DiaryCompletion == "Complete")
+IntvComp<- (IntvCompletion == "Complete")
+IntvComp <- length(grep("TRUE", IntvCompletion))
+IntvInProg<- (is.na(IntvCompletion) & LENAD2DiaryCompletion == "Complete")
 IntvInProg <- length(grep("TRUE", IntvInProg))
 IntvDropOut <- (CaseProg$DropOutStage == 2)
 IntvDropOut <- length(grep("TRUE", IntvDropOut))
@@ -290,6 +296,10 @@ TotalDropOuts<- sum(Wv1DropOut,IntvDropOut,Wv2DropOut)
 <div class="btn-group btn-group-justified">
   <div class="btn-group">
 <button type="button" class="btn btn-outline-dark .w-100">**Consents Complete**<br>`r ConsentComp`</button>
+  </div>
+  
+  <div class="btn-group">
+<button type="button" class="btn btn-outline-dark .w-100">**Consents In Progress**<br>`r ConsentInProg`</button>
   </div>
   
 </div>
