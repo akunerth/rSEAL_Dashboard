@@ -116,7 +116,7 @@ CaseProg$Q2_21_TEXT <- as.Date(CaseProg$Q2_21_TEXT,"%m/%d/%y")
 CaseProg$Q2_22_TEXT <- as.Date(CaseProg$Q2_22_TEXT,"%m/%d/%y")                       
 CaseProg$Q2_23_TEXT <- as.Date(CaseProg$Q2_23_TEXT,"%m/%d/%y")                      
 CaseProg$Q2_24_TEXT <- as.Date(CaseProg$Q2_24_TEXT,"%m/%d/%y")
-CaseProg$Q10 <- as.Date(CaseProg$Q10,"%Y-%m-%d")
+CaseProg$Q10 <- as.Date(CaseProg$Q10,"%m/%d/%y")
 CoachImp$StartDate <- as.Date(CoachImp$StartDate,"%m/%d/%y")
 CoachImp$EndDate <- as.Date(CoachImp$EndDate,"%m/%d/%y")
 CoachImp$RecordedDate <- as.Date(CoachImp$RecordedDate,"%m/%d/%y")
@@ -266,22 +266,22 @@ par(mar = c(4, 4, .2, .1))
 
 #Enrollment$Surv1CompletionTime<- #round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- as.Date(Sys.time())
-start <- as.Date("2020-07-01")
-Test0 <- today - Enrollment$Informed.Consent
-Test <- today - Enrollment$SubInfoActual
-Test1 <- today - Enrollment$Survey1Actual
-Test2 <- today - Enrollment$Survey2Actual
-Test3 <- today - Enrollment$PDR2Actual
-Test4 <- today - Enrollment$LENA1Expected
-Test4.1 <- today - Enrollment$LENAD1DiaryActual
-Test5 <- today - Enrollment$LENA2Expected
-Test6 <- today - Enrollment$CoachImpComplete
-Test7 <- today - Enrollment$Survey3Actual
-Test8 <- today - Enrollment$Survey4Actual
-Test9 <- today - Enrollment$PDR5Actual
-Test10 <- today - Enrollment$PDR6Actual
-Test11 <- today - Enrollment$LENAD3DiaryActual
-Test11.1 <- today - Enrollment$LENAD4DiaryActual
+start <- "2020-07-01"
+Test0 <- today - as.Date(Enrollment$Informed.Consent,"%y-%m-%d")
+Test <- today - as.Date(Enrollment$SubInfoActual, "%y-%m-%d")
+Test1 <- today - as.Date(Enrollment$Survey1Actual, "%y-%m-%d")
+Test2 <- today - as.Date(Enrollment$Survey2Actual, "%y-%m-%d")
+Test3 <- today - as.Date(Enrollment$PDR2Actual, "%y-%m-%d")
+Test4 <- today - as.Date(Enrollment$LENA1Expected, "%y-%m-%d")
+Test4.1 <- today - as.Date(Enrollment$LENAD1DiaryActual, "%y-%m-%d")
+Test5 <- today - as.Date(Enrollment$LENA2Expected, "%y-%m-%d")
+Test6 <- today - as.Date(Enrollment$CoachImpComplete, "%y-%m-%d")
+Test7 <- today - as.Date(Enrollment$Survey3Actual, "%y-%m-%d")
+Test8 <- today - as.Date(Enrollment$Survey4Actual, "%y-%m-%d")
+Test9 <- today - as.Date(Enrollment$PDR5Actual, "%y-%m-%d")
+Test10 <- today - as.Date(Enrollment$PDR6Actual, "%y-%m-%d")
+Test11 <- today - as.Date(Enrollment$LENAD3DiaryActual, "%y-%m-%d")
+Test11.1 <- today - as.Date(Enrollment$LENAD4DiaryActual, "%y-%m-%d")
 Enrollment1 <- Enrollment %>%
       select(RSID:LENAD4DiaryActual) %>%
       mutate(
