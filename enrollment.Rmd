@@ -56,25 +56,25 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 ```{r Read in Files and set-up columns, echo = FALSE, warning=FALSE, message=FALSE}
 #Read Masterfile
 library(haven)
-masterfile <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/masterfile.sav'))
+masterfile <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/masterfile.sav'))
 LENADataW1 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W1"))
 LENADataW2 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W2"))
 #rSEAL Manual Consent Data
-Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
+Consents1 <- data.frame(read_xlsx('~/Box/SEAL-r/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
 #rSEAL Test Consent Data
 library(haven)
-Consents2 <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.sav'))
+Consents2 <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Consent_Tracker.sav'))
 Consents2 <- subset(Consents2, select = -c(2:17))
 Consents2$recontact <- as.numeric(Consents2$recontact)
 #Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
 
 #Read in LENA Tracker for Expected Dates
-LENATracker <- data.frame(read.csv('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
+LENATracker <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
 #Read in Case Progression Log
-CaseProg <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Case_Progression_Log.sav'))
+CaseProg <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Case_Progression_Log.sav'))
 
 #Read in Coach Impressions
-CoachImp <- data.frame(read_sav(file = '~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Coach_Impressions_Form.sav'))
+CoachImp <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Coach_Impressions_Form.sav'))
 #masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
 #masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
 #masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
@@ -189,7 +189,7 @@ Consents2 <- data.frame("RSID" = Consents2$RSID,
                         "StaffSignature"= Consents2$Staff.Signature)
 #Select/merge consent data to align to just one case
 Consents2.1 <- Consents2[rowSums(is.na(Consents2)) < 3, ]
-Consents2.2 <- Consents2.1[match(unique(Consents2.1$Informed.Consent), Consents2.1$Informed.Consent),]
+Consents2.2 <- Consents2.1[match(unique(Consents2.1$RSID), Consents2.1$RSID),]
 Consents2.3 <- data.frame("RSID" = Consents2.2$RSID,
                         "Informed Consent"= Consents2.2$Informed.Consent)
 Consents2.4 <- Consents2.1[match(unique(Consents2.1$StaffSignature), Consents2.1$StaffSignature),]
@@ -239,11 +239,13 @@ CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
 CoachImp <- data.frame("RSID" = CoachImp$RSID,
                         "CoachImpComplete" = CoachImp$RecordedDate)
 EnrollmentConsents <- full_join(Consents1,Consents5)
-#Remove duplicate response from RS018
-EnrollmentConsents <- EnrollmentConsents %>% slice(-c(48))
+#Remove duplicate response from RS018, RS046, RS062, RS064
+EnrollmentConsents <- EnrollmentConsents %>% slice(-c(42,43, 44,48))
+
 EnrollmentConsents <- full_join(EnrollmentConsents,CoachImp)
 #Remove duplicate response from RS039
 EnrollmentConsents <- EnrollmentConsents %>% slice(-c(29))
+
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
 EnrollmentConsents <- left_join(EnrollmentConsents,LENATracker, by = "RSID")
@@ -721,12 +723,14 @@ Enrollment15$Status <- forcats::fct_relevel(Enrollment15$Status,"Complete", "Opt
 #Enrollment14$Status <- forcats::fct_relevel(Enrollment14$Status, "Opt-Out", after = 2)
 Enrollment15$Cases <- factor(Enrollment15$RSID) # Create a categorical variable
 Enrollment15$Instrument <- factor(Enrollment15$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD1DataStatus","LENAD2DiaryStatus","LENAD2DataStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD3DataStatus", "LENAD4DiaryStatus", "LENAD4DataStatus")) # Create categorical variable
+
+cols <- c("Complete" = "#33a02c", "Opt-Out" = "#737373", "On-Track" = "1f78b4", "Warning" = "#ffff99", "Delinquent" = "#e31a1c", "NA"="#bdbdbd")
+labels <- c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
+
 p <- ggplot(data = Enrollment15, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + 
 # Creates stacked bar chart
-scale_x_discrete(labels=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")) +
-scale_fill_manual(values = c("#bdbdbd","#e31a1c","#1f78b4","#737373","#33a02c" #"#ffff99"
-                             ), labels = c("NA", "Delinquent","On-Track",   #"Warning",  
-                                            "Opt-Out","Complete")) #Manually assigns colors
+scale_x_discrete(label=labels) + scale_fill_manual(values = cols)
+
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
@@ -735,7 +739,7 @@ p
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 Wave1 <- table(Enrollment15$Instrument, Enrollment15$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data", "LENA D2 Diary", "LENA D2 Data","Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
+rownames(Wave1) = labels
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Opt-Out","On-Track", "Warning","Delinquent", "NA")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))

@@ -55,10 +55,10 @@ options(knitr.table.format = "html", knitr.kable.NA = '')
 #Numbers <- data.frame(read_xlsx('/Volumes/psy-ctn/psy-ctn/SNAPLab/#SNAP Projects/SEAL/Data #Management/Enrollment_Table/SEAL_OG_Numbers.xlsx','Current_Data'))
 
 #rSEAL Manual Consent Data
-Consents1 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
+Consents1 <- data.frame(read_xlsx('~/Box/SEAL-r/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
 
 #rSEAL Test Consent Data
-Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Test.xlsx', 'Sheet1'))
+Consents2 <- data.frame(read_xlsx('~/Box/SEAL-r/rSEAL_Data/Consent_Test.xlsx', 'Sheet1'))
 
 #Format Dates for Consent Data
 Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
