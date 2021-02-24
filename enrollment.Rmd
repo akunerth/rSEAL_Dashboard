@@ -724,7 +724,7 @@ Enrollment15$Status <- forcats::fct_relevel(Enrollment15$Status,"Complete", "Opt
 Enrollment15$Cases <- factor(Enrollment15$RSID) # Create a categorical variable
 Enrollment15$Instrument <- factor(Enrollment15$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD1DataStatus","LENAD2DiaryStatus","LENAD2DataStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD3DataStatus", "LENAD4DiaryStatus", "LENAD4DataStatus")) # Create categorical variable
 
-cols <- c("Complete" = "#33a02c", "Opt-Out" = "#737373", "On-Track" = "1f78b4", "Warning" = "#ffff99", "Delinquent" = "#e31a1c", "NA"="#bdbdbd")
+cols <- c("Complete" = "#33a02c", "Opt-Out" = "#737373", "On-Track" = "#2171b5", "Warning" = "#ffff99", "Delinquent" = "#e31a1c", "NA"="#bdbdbd")
 labels <- c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
 
 p <- ggplot(data = Enrollment15, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + 
