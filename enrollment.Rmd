@@ -266,7 +266,8 @@ par(mar = c(4, 4, .2, .1))
 
 #Enrollment$Surv1CompletionTime<- #round(difftime(Enrollment$Survey1Actual,Enrollment$SubInfoActual, units = c("days"),1))
 today <- as.Date(Sys.time())
-start <- "2020-07-01"
+start <- as.Date("2020-07-01")
+DropOutDate <- Enrollment$DropOutDate
 Test0 <- today - as.Date(Enrollment$Informed.Consent,"%y-%m-%d")
 Test <- today - as.Date(Enrollment$SubInfoActual, "%y-%m-%d")
 Test1 <- today - as.Date(Enrollment$Survey1Actual, "%y-%m-%d")
