@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 2/19/2021"
+date: "Last Updated: 2/23/2021"
 output: 
   html_document:
     theme: flatly
@@ -383,7 +383,7 @@ Enrollment6 <- Enrollment5%>%
       Test4 < 2 & is.na(LENAD1DiaryActual) ~ "On-Track",
       DropOutDate > start & is.na(LENAD1DiaryActual) ~ "Opt-Out",
       LENAW1D1Log_OptOut > start  ~ "Opt-Out",
-      PDRW1D3_OptOut > start  ~ "Opt-Out",
+      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD1DiaryActual) ~ "Delinquent",
       LENAD1DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -397,7 +397,6 @@ Enrollment6.1 <- Enrollment6%>%
       Test4.1 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW1) ~ "Warning",
       Test4.1 < 3 & is.na(LENAD1DataW1) ~ "On-Track",
       DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
-      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
       PDRW1D3_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD1DataW1) ~ "Delinquent",
       LENAD1DataW1 > 0       ~ "Complete",
@@ -431,8 +430,6 @@ Enrollment7.1 <- Enrollment7%>%
       Test6 <= 7 & Test4.1 >= 3 & is.na(LENAD2DataW1) ~ "Warning",
       Test6 < 3 & is.na(LENAD2DataW1) ~ "On-Track",
       DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
-      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
-      PDRW1D3_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD2DataW1) ~ "Delinquent",
       LENAD2DataW1 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -526,8 +523,7 @@ Enrollment12.1 <- Enrollment12%>%
       Test11 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW2) ~ "Warning",
       Test11 < 3 & is.na(LENAD1DataW2) ~ "On-Track",
       DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
-      LENAW2D1Log_OptOut > start  ~ "Opt-Out",
-      PDRW2D3_OptOut > start  ~ "Opt-Out",
+      LENAW2D2Log_OptOut > start  ~ "Opt-Out",
       LENAD3DiaryActual > start & is.na(LENAD1DataW2) ~ "Delinquent",
       LENAD1DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -554,8 +550,6 @@ Enrollment13.1 <- Enrollment13%>%
       Test11.1 <= 7 & Test11.1 >= 3 & is.na(LENAD2DataW2) ~ "Warning",
       Test11.1 < 3 & is.na(LENAD2DataW2) ~ "On-Track",
       DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
-      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
-      PDRW1D3_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD2DataW2) ~ "Delinquent",
       LENAD2DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -724,13 +718,11 @@ Enrollment15$Status <- forcats::fct_relevel(Enrollment15$Status,"Complete", "Opt
 Enrollment15$Cases <- factor(Enrollment15$RSID) # Create a categorical variable
 Enrollment15$Instrument <- factor(Enrollment15$Instrument, levels = c("ConsentStatus", "PostConsentStatus", "Surv1Status","Surv2Status","PDR2Status","PDR3Status", "LENAD1DiaryStatus","LENAD1DataStatus","LENAD2DiaryStatus","LENAD2DataStatus", "Surv3Status","Surv4Status","PDR5Status","PDR6Status", "LENAD3DiaryStatus","LENAD3DataStatus", "LENAD4DiaryStatus", "LENAD4DataStatus")) # Create categorical variable
 
-cols <- c("Complete" = "#33a02c", "Opt-Out" = "#737373", "On-Track" = "#2171b5", "Warning" = "#ffff99", "Delinquent" = "#e31a1c", "NA"="#bdbdbd")
-labels <- c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
-
 p <- ggplot(data = Enrollment15, aes(x=Instrument, fill= forcats::fct_rev(Status))) + geom_bar() + 
 # Creates stacked bar chart
-scale_x_discrete(label=labels) + scale_fill_manual(values = cols)
-
+scale_x_discrete(label=c("Consent","PostConsentStatus", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data","LENA D2 Diary", "LENA D2 Data", "Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data"), drop = FALSE) + scale_fill_manual(values = c("#bdbdbd","#e31a1c","#ffff99","#1f78b4","#737373","#33a02c"
+                             ), labels = c("NA", "Delinquent", "Warning", "On-Track", 
+                                            "Opt-Out","Complete")) #Manually assigns colors
 p <- p + xlab("Instrument") + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + labs(fill = "Statuses") 
  # Adds title and labels
 p
@@ -739,7 +731,7 @@ p
 ```{r SEAL Wave 1 Progression Table, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
 Wave1 <- table(Enrollment15$Instrument, Enrollment15$Status, dnn=c("Instrument", "Status"))
 library(kableExtra)
-rownames(Wave1) = labels
+rownames(Wave1) = c("Consent", "Post Consent", "Survey 1", "Survey 2", "PDR2", "PDR3", "LENA D1 Diary", "LENA D1 Data", "LENA D2 Diary", "LENA D2 Data","Survey 3", "Survey 4", "PDR5", "PDR6", "LENA D3 Diary", "LENA D3 Data", "LENA D4 Diary", "LENA D4 Data")
 Wave1Counts <- kable(Wave1,
         col.names = c("Complete","Opt-Out","On-Track", "Warning","Delinquent", "NA")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
