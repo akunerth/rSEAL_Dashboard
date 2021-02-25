@@ -120,6 +120,10 @@ CaseProg$Q10 <- as.Date(CaseProg$Q10,"%m/%d/%y")
 CoachImp$StartDate <- as.Date(CoachImp$StartDate,"%m/%d/%y")
 CoachImp$EndDate <- as.Date(CoachImp$EndDate,"%m/%d/%y")
 CoachImp$RecordedDate <- as.Date(CoachImp$RecordedDate,"%m/%d/%y")
+LENADataW1$D1_OptOut <- as.Date(LENADataW1$D1_OptOut , "%Y-%m-%d")
+LENADataW1$D2_OptOut <- as.Date(LENADataW1$D2_OptOut , "%Y-%m-%d")
+LENADataW2$D1_OptOut <- as.Date(LENADataW2$D1_OptOut , "%Y-%m-%d")
+LENADataW2$D2_OptOut <- as.Date(LENADataW2$D2_OptOut , "%Y-%m-%d")
 
 #Remove rows without cases
 library(dplyr)
@@ -211,10 +215,14 @@ LENATracker <- data.frame("RSID" = LENATracker$RSID,
                         "LENA2Expected"= LENATracker$LENA2Expected)
 LENADataW1 <- data.frame("RSID" = LENADataW1$RSID,
                         "LENAD1DataW1" = LENADataW1$FullHours_D1,
-                        "LENAD2DataW1"= LENADataW1$FullHours_D2)
+                        "LENAD2DataW1"= LENADataW1$FullHours_D2,
+                        "LENAD1OptOut"= LENADataW1$D1_OptOut,
+                        "LENAD2OptOut"= LENADataW1$D2_OptOut)
 LENADataW2 <- data.frame("RSID" = LENADataW2$RSID,
                         "LENAD1DataW2" = LENADataW2$FullHours_D1,
-                        "LENAD2DataW2"= LENADataW2$FullHours_D2)
+                        "LENAD2DataW2"= LENADataW2$FullHours_D2,
+                        "LENAD3OptOut"= LENADataW2$D1_OptOut,
+                        "LENAD4OptOut"= LENADataW2$D2_OptOut)
 CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
                         "Survey1_OptOut" = CaseProg$Q2_1_TEXT,
                         "Survey2_OptOut" = CaseProg$Q2_2_TEXT,
@@ -397,6 +405,7 @@ Enrollment6.1 <- Enrollment6%>%
       mutate(
       LENAD1DataStatus = case_when(
       DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
+      Enrollment6$LENAD1OptOut > start & is.na(LENAD1DataW1) ~ "Opt-Out",
       Test4.1 > 7 & is.na(LENAD1DataW1) ~ "Delinquent",
       Test4.1 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW1) ~ "Warning",
       Test4.1 < 3 & is.na(LENAD1DataW1) ~ "On-Track",
@@ -429,6 +438,7 @@ Enrollment7.1 <- Enrollment7%>%
       mutate(
       LENAD2DataStatus = case_when(
       DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
+      Enrollment7$LENAD2OptOut > start & is.na(LENAD2DataW1) ~ "Opt-Out",
       Test6 > 7 & is.na(LENAD2DataW1) ~ "Delinquent",
       Test6 <= 7 & Test4.1 >= 3 & is.na(LENAD2DataW1) ~ "Warning",
       Test6 < 3 & is.na(LENAD2DataW1) ~ "On-Track",
@@ -522,6 +532,7 @@ Enrollment12.1 <- Enrollment12%>%
       mutate(
       LENAD3DataStatus = case_when(
       DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
+      Enrollment12$LENAD3OptOut > start & is.na(LENAD1DataW2) ~ "Opt-Out",
       Test11 > 7 & is.na(LENAD1DataW2) ~ "Delinquent",
       Test11 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW2) ~ "Warning",
       Test11 < 3 & is.na(LENAD1DataW2) ~ "On-Track",
@@ -548,6 +559,7 @@ Enrollment13.1 <- Enrollment13%>%
       mutate(
       LENAD4DataStatus = case_when(
       DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
+      Enrollment13$LENAD4OptOut > start & is.na(LENAD2DataW2) ~ "Opt-Out",
       Test11.1 > 7 & is.na(LENAD2DataW2) ~ "Delinquent",
       Test11.1 <= 7 & Test11.1 >= 3 & is.na(LENAD2DataW2) ~ "Warning",
       Test11.1 < 3 & is.na(LENAD2DataW2) ~ "On-Track",
