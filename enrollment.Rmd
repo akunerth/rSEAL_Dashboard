@@ -243,8 +243,11 @@ EnrollmentConsents <- full_join(Consents1,Consents5)
 EnrollmentConsents <- EnrollmentConsents %>% slice(-c(42,43, 44,48))
 
 EnrollmentConsents <- full_join(EnrollmentConsents,CoachImp)
-#Remove duplicate response from RS039
-EnrollmentConsents <- EnrollmentConsents %>% slice(-c(29))
+#Remove duplicate response from RS039, RS005
+EnrollmentConsents <- EnrollmentConsents %>% slice(-c(29,48))
+#Fix duplicates
+EnrollmentConsents[EnrollmentConsents$RSID=="RS005","StaffSignature"] <- "2021-02-23"
+
 
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
@@ -295,16 +298,16 @@ Enrollment1.1 <- Enrollment1 %>%
         select(RSID:ConsentStatus) %>%
       mutate(
       PostConsentStatus = case_when(
-      Test0 > 7 & is.na(SubInfoActual) ~ "Delinquent",
-      Test0 <= 7 & Test0 >= 3 & is.na(SubInfoActual) ~ "Warning",
-      Test0 < 3 & is.na(SubInfoActual) ~ "On-Track",
-      DropOutDate > start & is.na(SubInfoActual) ~ "Opt-Out",
-      Survey1Actual > start & is.na(SubInfoActual) ~ "Delinquent",
-      Survey2Actual > start & is.na(SubInfoActual) ~ "Delinquent",
-      PDR2Actual > start & is.na(SubInfoActual) ~ "Delinquent",
-      PDR3Actual > start & is.na(SubInfoActual) ~ "Delinquent",
-      LENAD1DiaryActual > start & is.na(SubInfoActual) ~ "Delinquent",
-      LENAD2DiaryActual > start & is.na(SubInfoActual) ~ "Delinquent",
+      DropOutDate > start & is.na(Enrollment$SubInfoActual) ~ "Opt-Out",
+      Test0 > 7 & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      Test0 <= 7 & Test0 >= 3 & is.na(Enrollment$SubInfoActual) ~ "Warning",
+      Test0 < 3 & is.na(Enrollment$SubInfoActual) ~ "On-Track",
+      Survey1Actual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      Survey2Actual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      PDR2Actual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      PDR3Actual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      LENAD1DiaryActual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
+      LENAD2DiaryActual > start & is.na(Enrollment$SubInfoActual) ~ "Delinquent",
       SubInfoActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -313,11 +316,11 @@ Enrollment2 <- Enrollment1.1 %>%
       select(RSID:PostConsentStatus) %>%
       mutate(
       Surv1Status = case_when(
+      DropOutDate > start & is.na(Survey1Actual) ~ "Opt-Out",
+      Survey1_OptOut > start  ~ "Opt-Out",
       Test > 7 & is.na(Survey1Actual) ~ "Delinquent",
       Test <= 7 & Test >= 3 & is.na(Survey1Actual) ~ "Warning",
       Test < 3 & is.na(Survey1Actual) ~ "On-Track",
-      DropOutDate > start & is.na(Survey1Actual) ~ "Opt-Out",
-      Survey1_OptOut > start  ~ "Opt-Out",
       Survey2Actual > start & is.na(Survey1Actual) ~ "Delinquent",
       PDR2Actual > start & is.na(Survey1Actual) ~ "Delinquent",
       PDR3Actual > start & is.na(Survey1Actual) ~ "Delinquent",
@@ -331,11 +334,11 @@ Enrollment3 <- Enrollment2%>%
       select(RSID:Surv1Status) %>%
       mutate(
       Surv2Status = case_when(
+      DropOutDate > start & is.na(Survey2Actual) ~ "Opt-Out",
+      Survey2_OptOut > start  ~ "Opt-Out",
       Test1 > 7 & is.na(Survey2Actual) ~ "Delinquent",
       Test1 <= 7 & Test1 >= 3 & is.na(Survey2Actual) ~ "Warning",
       Test1 < 3 & is.na(Survey2Actual) ~ "On-Track",
-      DropOutDate > start & is.na(Survey2Actual) ~ "Opt-Out",
-      Survey2_OptOut > start  ~ "Opt-Out",
       PDR2Actual > start & is.na(Survey2Actual) ~ "Delinquent",
       PDR3Actual > start & is.na(Survey2Actual) ~ "Delinquent",
       LENAD1DiaryActual > start & is.na(Survey2Actual) ~ "Delinquent",
@@ -348,11 +351,11 @@ Enrollment4 <- Enrollment3%>%
       select(RSID:Surv2Status) %>%
       mutate(
       PDR2Status = case_when(
+      DropOutDate > start & is.na(PDR2Actual) ~ "Opt-Out",
+      PDRW1D2_OptOut > start  ~ "Opt-Out",
       Test2 > 3 & is.na(PDR2Actual) ~ "Delinquent",
       Test2 <= 3 & Test2 >= 1 & is.na(PDR2Actual) ~ "Warning",
       Test2 < 1 & is.na(PDR2Actual) ~ "On-Track",
-      DropOutDate > start & is.na(PDR2Actual) ~ "Opt-Out",
-      PDRW1D2_OptOut > start  ~ "Opt-Out",
       PDR3Actual > start & is.na(PDR2Actual) ~ "Delinquent",
       LENAD1DiaryActual > start & is.na(PDR2Actual) ~ "Delinquent",
       LENAD2DiaryActual > start & is.na(PDR2Actual) ~ "Delinquent",
@@ -364,11 +367,11 @@ Enrollment5 <- Enrollment4%>%
       select(RSID:PDR2Status) %>%
       mutate(
       PDR3Status = case_when(
+      DropOutDate > start & is.na(PDR3Actual) ~ "Opt-Out",
+      PDRW1D3_OptOut > start  ~ "Opt-Out",
       Test3 > 3 & is.na(PDR3Actual) ~ "Delinquent",
       Test3 <= 3 & Test3 >= 1 & is.na(PDR3Actual) ~ "Warning",
       Test3 < 1 & is.na(PDR3Actual) ~ "On-Track",
-      DropOutDate > start & is.na(PDR3Actual) ~ "Opt-Out",
-      PDRW1D3_OptOut > start  ~ "Opt-Out",
       LENAD1DiaryActual > start & is.na(PDR3Actual) ~ "Delinquent",
       LENAD2DiaryActual > start & is.na(PDR3Actual) ~ "Delinquent",
       PDR3Actual > start       ~ "Complete",
@@ -379,12 +382,11 @@ Enrollment6 <- Enrollment5%>%
       select(RSID:PDR3Status) %>%
       mutate(
       LENAD1DiaryStatus = case_when(
+      DropOutDate > start & is.na(LENAD1DiaryActual) ~ "Opt-Out",
+      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
       Test4 > 4 & is.na(LENAD1DiaryActual) ~ "Delinquent",
       Test4 <= 4 & Test4 >= 2 & is.na(LENAD1DiaryActual) ~ "Warning",
       Test4 < 2 & is.na(LENAD1DiaryActual) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD1DiaryActual) ~ "Opt-Out",
-      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
-      LENAW1D1Log_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD1DiaryActual) ~ "Delinquent",
       LENAD1DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -394,11 +396,10 @@ Enrollment6.1 <- Enrollment6%>%
       select(RSID:LENAD1DiaryStatus) %>%
       mutate(
       LENAD1DataStatus = case_when(
+      DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
       Test4.1 > 7 & is.na(LENAD1DataW1) ~ "Delinquent",
       Test4.1 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW1) ~ "Warning",
       Test4.1 < 3 & is.na(LENAD1DataW1) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
-      PDRW1D3_OptOut > start  ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD1DataW1) ~ "Delinquent",
       LENAD1DataW1 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -408,11 +409,11 @@ Enrollment7 <- Enrollment6.1%>%
       select(RSID:LENAD1DataStatus) %>%
       mutate(
       LENAD2DiaryStatus = case_when(
+      DropOutDate > start & is.na(LENAD2DiaryActual) ~ "Opt-Out",
+      LENAW1D2Log_OptOut > start  ~ "Opt-Out",
       Test5 > 3 & is.na(LENAD2DiaryActual) ~ "Delinquent",
       Test5 <= 3 & Test5 >= 1 & is.na(LENAD2DiaryActual) ~ "Warning",
       Test5 < 1 & is.na(LENAD2DiaryActual) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD2DiaryActual) ~ "Opt-Out",
-      LENAW1D2Log_OptOut > start  ~ "Opt-Out",
       Survey3Actual > start & is.na(LENAD2DiaryActual) ~ "Delinquent",
       Survey4Actual > start & is.na(LENAD2DiaryActual) ~ "Delinquent",
       PDR5Actual > start & is.na(LENAD2DiaryActual) ~ "Delinquent",
@@ -427,10 +428,10 @@ Enrollment7.1 <- Enrollment7%>%
       select(RSID:LENAD2DiaryStatus) %>%
       mutate(
       LENAD2DataStatus = case_when(
+      DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
       Test6 > 7 & is.na(LENAD2DataW1) ~ "Delinquent",
       Test6 <= 7 & Test4.1 >= 3 & is.na(LENAD2DataW1) ~ "Warning",
       Test6 < 3 & is.na(LENAD2DataW1) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD2DataW1) ~ "Delinquent",
       LENAD2DataW1 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -440,11 +441,11 @@ Enrollment8 <- Enrollment7.1%>%
       select(RSID:LENAD2DataStatus) %>%
       mutate(
       Surv3Status = case_when(
+      DropOutDate > start & is.na(Survey3Actual) ~ "Opt-Out",
+      Survey3_OptOut > start  ~ "Opt-Out",
       Test6 > 7 & is.na(Survey3Actual) ~ "Delinquent",
       Test6 <= 7 & Test6 >= 3 & is.na(Survey3Actual) ~ "Warning",
       Test6 < 3 & is.na(Survey3Actual) ~ "On-Track",
-      DropOutDate > start & is.na(Survey3Actual) ~ "Opt-Out",
-      Survey3_OptOut > start  ~ "Opt-Out",
       Survey4Actual > start & is.na(Survey3Actual) ~ "Delinquent",
       PDR5Actual > start & is.na(Survey3Actual) ~ "Delinquent",
       PDR6Actual > start & is.na(Survey3Actual) ~ "Delinquent",
@@ -458,11 +459,11 @@ Enrollment9 <- Enrollment8%>%
       select(RSID:Surv3Status) %>%
       mutate(
       Surv4Status = case_when(
+      DropOutDate > start & is.na(Survey4Actual) ~ "Opt-Out",
+      Survey4_OptOut > start  ~ "Opt-Out",
       Test7 > 7 & is.na(Survey4Actual) ~ "Delinquent",
       Test7 <= 7 & Test7 >= 3 & is.na(Survey4Actual) ~ "Warning",
       Test7 < 3 & is.na(Survey4Actual) ~ "On-Track",
-      DropOutDate > start & is.na(Survey4Actual) ~ "Opt-Out",
-      Survey4_OptOut > start  ~ "Opt-Out",
       PDR5Actual > start & is.na(Survey4Actual) ~ "Delinquent",
       PDR6Actual > start & is.na(Survey4Actual) ~ "Delinquent",
       LENAD3DiaryActual > start & is.na(Survey4Actual) ~ "Delinquent",
@@ -475,11 +476,11 @@ Enrollment10 <- Enrollment9%>%
       select(RSID:Surv4Status) %>%
       mutate(
       PDR5Status = case_when(
+      DropOutDate > start & is.na(PDR5Actual) ~ "Opt-Out",
+      PDRW2D2_OptOut > start  ~ "Opt-Out",
       Test8 > 3 & is.na(PDR5Actual) ~ "Delinquent",
       Test8 <= 3 & Test8 >= 1 & is.na(PDR5Actual) ~ "Warning",
       Test8 < 1 & is.na(PDR5Actual) ~ "On-Track",
-      DropOutDate > start & is.na(PDR5Actual) ~ "Opt-Out",
-      PDRW2D2_OptOut > start  ~ "Opt-Out",
       PDR6Actual > start & is.na(PDR5Actual) ~ "Delinquent",
       LENAD3DiaryActual > start & is.na(PDR5Actual) ~ "Delinquent",
       LENAD4DiaryActual > start & is.na(PDR5Actual) ~ "Delinquent",
@@ -491,11 +492,11 @@ Enrollment11 <- Enrollment10%>%
       select(RSID:PDR5Status) %>%
       mutate(
       PDR6Status = case_when(
+      DropOutDate > start & is.na(PDR6Actual) ~ "Opt-Out",
+      PDRW2D3_OptOut > start  ~ "Opt-Out",
       Test9 > 3 & is.na(PDR6Actual) ~ "Delinquent",
       Test9 <= 3 & Test9 >= 1 & is.na(PDR6Actual) ~ "Warning",
       Test9 < 1 & is.na(PDR6Actual) ~ "On-Track",
-      DropOutDate > start & is.na(PDR6Actual) ~ "Opt-Out",
-      PDRW2D3_OptOut > start  ~ "Opt-Out",
       LENAD3DiaryActual > start & is.na(PDR6Actual) ~ "Delinquent",
       LENAD4DiaryActual > start & is.na(PDR6Actual) ~ "Delinquent",
       PDR6Actual > start       ~ "Complete",
@@ -506,11 +507,11 @@ Enrollment12 <- Enrollment11%>%
       select(RSID:PDR6Status) %>%
       mutate(
       LENAD3DiaryStatus = case_when(
+      DropOutDate > start & is.na(LENAD3DiaryActual) ~ "Opt-Out",
+      LENAW2D1Log_OptOut > start  ~ "Opt-Out",
       Test10 > 4 & is.na(LENAD3DiaryActual) ~ "Delinquent",
       Test10 <= 4 & Test10 >= 2 & is.na(LENAD3DiaryActual) ~ "Warning",
       Test10 < 2 & is.na(LENAD3DiaryActual) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD3DiaryActual) ~ "Opt-Out",
-      LENAW2D1Log_OptOut > start  ~ "Opt-Out",
       LENAD4DiaryActual > start & is.na(LENAD3DiaryActual) ~ "Delinquent",
       LENAD3DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -520,11 +521,10 @@ Enrollment12.1 <- Enrollment12%>%
       select(RSID:LENAD3DiaryStatus) %>%
       mutate(
       LENAD3DataStatus = case_when(
+      DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
       Test11 > 7 & is.na(LENAD1DataW2) ~ "Delinquent",
       Test11 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW2) ~ "Warning",
       Test11 < 3 & is.na(LENAD1DataW2) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
-      LENAW2D2Log_OptOut > start  ~ "Opt-Out",
       LENAD3DiaryActual > start & is.na(LENAD1DataW2) ~ "Delinquent",
       LENAD1DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -534,11 +534,11 @@ Enrollment13 <- Enrollment12.1%>%
       select(RSID:LENAD3DataStatus) %>%
       mutate(
       LENAD4DiaryStatus = case_when(
+      DropOutDate > start & is.na(LENAD4DiaryActual) ~ "Opt-Out",
+      LENAW2D2Log_OptOut > start  ~ "Opt-Out",
       Test11 > 3 & is.na(LENAD4DiaryActual) ~ "Delinquent",
       Test11 <= 3 & Test >= 1 & is.na(LENAD4DiaryActual) ~ "Warning",
       Test11 < 1 & is.na(LENAD4DiaryActual) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD4DiaryActual) ~ "Opt-Out",
-      LENAW2D2Log_OptOut > start  ~ "Opt-Out",
       LENAD4DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -547,10 +547,10 @@ Enrollment13.1 <- Enrollment13%>%
       select(RSID:LENAD4DiaryStatus) %>%
       mutate(
       LENAD4DataStatus = case_when(
+      DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
       Test11.1 > 7 & is.na(LENAD2DataW2) ~ "Delinquent",
       Test11.1 <= 7 & Test11.1 >= 3 & is.na(LENAD2DataW2) ~ "Warning",
       Test11.1 < 3 & is.na(LENAD2DataW2) ~ "On-Track",
-      DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
       LENAD2DiaryActual > start & is.na(LENAD2DataW2) ~ "Delinquent",
       LENAD2DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
