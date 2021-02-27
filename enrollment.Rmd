@@ -73,6 +73,11 @@ LENATracker <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/FamTracker Data/LENA
 #Read in Case Progression Log
 CaseProg <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Case_Progression_Log.sav'))
 
+#Read in Fidelity Data
+library(haven)
+FIND <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/FIND_Fidelity.sav'))
+HTP <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/HTP_Fidelity.sav'))
+
 #Read in Coach Impressions
 CoachImp <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Coach_Impressions_Form.sav'))
 #masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
@@ -576,9 +581,9 @@ PostConsentInProg<- (Enrollment13.1$ConsentStatus == "Complete" & Enrollment13.1
 PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
 Wv1DropOut <- (Enrollment13.1$DropOutStage == 1)
 Wv1DropOut <- length(grep("TRUE", Wv1DropOut))
-Wv1Comp<-  (Enrollment15$LENAD2DiaryStatus == "Complete" | Enrollment15$LENAD2DiaryStatus == "Opt-Out")
+Wv1Comp<-  ((Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Complete") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Opt-Out"))
 Wv1Comp <- (length(grep("TRUE", Wv1Comp)) - Wv1DropOut)
-Wv1InProg<- ((Enrollment13.1$LENAD2DiaryStatus != "Complete" & Enrollment13.1$LENAD2DiaryStatus != "Opt-Out") & Enrollment13.1$PostConsentStatus == "Complete") 
+Wv1InProg<- ((Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Delinquent") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Warning") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "On-Track") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "NA"))
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
 IntvComp<- (Enrollment13.1$CoachImpComplete > "2020-07-01")
 IntvComp <- length(grep("TRUE", IntvComp))
@@ -588,10 +593,10 @@ IntvInProg<- (is.na(Enrollment13.1$CoachImpComplete) & Enrollment13.1$LENAD2Diar
 IntvInProg <- (length(grep("TRUE", IntvInProg))-(Wv1DropOut+IntvDropOut))
 Wv2DropOut <- (Enrollment13.1$DropOutStage == 3)
 Wv2DropOut <- length(grep("TRUE", Wv2DropOut))
-Wv2Comp<- ((Enrollment13.1$LENAD4DiaryStatus== "Complete"| Enrollment13.1$LENAD4DiaryStatus == "Opt-Out") & Enrollment13.1$CoachImpComplete > "2020-07-01")
-Wv2Comp <- (length(grep("TRUE", Wv2Comp)) - (Wv2DropOut))
-Wv2InProg<- ((Enrollment13.1$LENAD4DiaryStatus != "Complete" & Enrollment13.1$LENAD4DiaryStatus != "Opt-Out") & Enrollment13.1$CoachImpComplete > "2020-07-01") 
-Wv2InProg <- length(grep("TRUE", Wv2InProg))
+Wv2Comp<- ((Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Complete") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Opt-Out"))
+Wv2Comp <- (length(grep("TRUE", Wv2Comp)) - (Wv2DropOut + Wv1DropOut + IntvDropOut))
+Wv2InProg<- ((Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Delinquent") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Warning") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "On-Track") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "NA") & (Enrollment15$Instrument == "Surv3Status" & Enrollment15$Status == "Complete"))
+Wv2InProg <- length(grep("TRUE", Wv2InProg)-(Wv1DropOut+IntvDropOut))
 Wv3DropOut <- (Enrollment13.1$DropOutStage == 4)
 Wv3InProg<- Wv2Comp
 Wv3DropOut <- length(grep("TRUE", Wv3DropOut))
