@@ -628,10 +628,10 @@ IntvInProg<- (is.na(Enrollment13.1$FidelityDate) & Enrollment13.1$LENAD2DiarySta
 IntvInProg <- (length(grep("TRUE", IntvInProg)))
 Wv2DropOut <- (Enrollment13.1$DropOutStage == 3)
 Wv2DropOut <- length(grep("TRUE", Wv2DropOut))
-Wv2Comp<- ((Enrollment13.1$FidelityDate > "2020-07-01") & Enrollment13.1$LENAD4DiaryStatus == "Complete" | Enrollment13.1$LENAD4DiaryStatus == "Opt-Out") 
-Wv2Comp <- (length(grep("TRUE", Wv2Comp)) - (Wv2DropOut + Wv1DropOut + IntvDropOut))
+Wv2Comp<- ((Enrollment13.1$FidelityDate > "2020-07-01") & (Enrollment13.1$LENAD4DiaryStatus == "Complete" | Enrollment13.1$LENAD4DiaryStatus == "Opt-Out")) 
+Wv2Comp <- (length(grep("TRUE", Wv2Comp)) - (Wv2DropOut))
 Wv2InProg<- ((Enrollment13.1$FidelityDate > "2020-07-01") & (Enrollment13.1$LENAD4DiaryStatus == "NA" | Enrollment13.1$LENAD4DiaryStatus == "Delinquent" | Enrollment13.1$LENAD4DiaryStatus == "Warning" | Enrollment13.1$LENAD4DiaryStatus == "On-Track"))
-Wv2InProg <- length(grep("TRUE", Wv2InProg)-(Wv1DropOut+Wv2DropOut + IntvDropOut))
+Wv2InProg <- length(grep("TRUE", Wv2InProg)-(Wv2DropOut))
 Wv3DropOut <- (Enrollment13.1$DropOutStage == 4)
 Wv3InProg<- Wv2Comp
 Wv3DropOut <- length(grep("TRUE", Wv3DropOut))
