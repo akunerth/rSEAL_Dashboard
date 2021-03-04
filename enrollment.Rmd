@@ -144,7 +144,7 @@ LENADataW2$D2_OptOut <- as.Date(LENADataW2$D2_OptOut , "%Y-%m-%d")
 
 #Remove rows without cases
 library(dplyr)
-CaseProg <- CaseProg %>% slice(-c(1,2))
+#CaseProg <- CaseProg %>% slice(-c(1,2))
 CoachImp <- CoachImp %>% slice(-c(1,2))
 FIND <- FIND %>% slice(-c(78))
 #Remove test response RS200 from CaseProg
