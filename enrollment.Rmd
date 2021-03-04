@@ -2,7 +2,7 @@
 ---
 title: "Current Enrollment"
 author: 
-date: "Last Updated: 2/24/2021, 11:35pm"
+date: "Last Updated: 3/4/2021, 1:15am"
 output: 
   html_document:
     theme: flatly
@@ -69,7 +69,9 @@ Consents2$recontact <- as.numeric(Consents2$recontact)
 #Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
 
 #Read in LENA Tracker for Expected Dates
-LENATracker <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/FamTracker Data/LENA_Data_w1.csv'))
+LENATracker1 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w1.csv'))
+LENATracker2 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w2.csv'))
+LENATracker3 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w3.csv'))
 #Read in Case Progression Log
 CaseProg <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Case_Progression_Log.sav'))
 
@@ -87,8 +89,16 @@ CoachImp <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Coach_Impression
 #Format Dates for Consent Data
 #Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
 #Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%m/%d/%Y")
-LENATracker$LENA1Expected <- as.Date(LENATracker$ExpectedDt1 , "%Y-%m-%d")
-LENATracker$LENA2Expected <- as.Date(LENATracker$ExpectedDt2 , "%Y-%m-%d")
+LENATracker1$LENA1Expected <- as.Date(LENATracker1$ExpectedDt1 , "%Y-%m-%d")
+LENATracker1$LENA2Expected <- as.Date(LENATracker1$ExpectedDt2 , "%Y-%m-%d")
+LENATracker2$LENA3Expected <- as.Date(LENATracker2$ExpectedDt1 , "%Y-%m-%d")
+LENATracker2$LENA4Expected <- as.Date(LENATracker2$ExpectedDt2 , "%Y-%m-%d")
+LENATracker3$LENA5Expected <- as.Date(LENATracker3$ExpectedDt1 , "%Y-%m-%d")
+LENATracker3$LENA6Expected <- as.Date(LENATracker3$ExpectedDt2 , "%Y-%m-%d")
+
+LENATracker <- left_join(LENATracker1,LENATracker2, by = "RSID")
+LENATracker <- left_join(LENATracker,LENATracker3, by = "RSID")
+
 # Format dates
 masterfile$SubInfoStart <- as.Date(masterfile$SubInfoStart, "%Y/%m/%d")
 masterfile$Survey1Start <- as.Date(masterfile$Survey1Start, "%Y/%m/%d")
@@ -103,6 +113,8 @@ masterfile$rSEAL.C2.LDL.003 <- as.Date(masterfile$rSEAL.C2.LDL.003, "%Y-%m-%d")
 masterfile$rSEAL.C2.LDL.029 <- as.Date(masterfile$rSEAL.C2.LDL.029, "%Y-%m-%d")
 masterfile$rSEAL.C1.LDL.003 <- as.Date(masterfile$rSEAL.C1.LDL.003, "%Y-%m-%d")
 masterfile$rSEAL.C1.LDL.029 <- as.Date(masterfile$rSEAL.C1.LDL.029, "%Y-%m-%d")
+FIND$StartDate <- as.Date(FIND$StartDate, "%Y-%m-%d")
+HTP$StartDate <- as.Date(HTP$StartDate, "%Y-%m-%d")
 CaseProg$Q2_1_TEXT <- as.Date(CaseProg$Q2_1_TEXT,"%m/%d/%y")
 CaseProg$Q2_2_TEXT <- as.Date(CaseProg$Q2_2_TEXT,"%m/%d/%y")
 CaseProg$Q2_3_TEXT <- as.Date(CaseProg$Q2_3_TEXT,"%m/%d/%y")
@@ -134,6 +146,7 @@ LENADataW2$D2_OptOut <- as.Date(LENADataW2$D2_OptOut , "%Y-%m-%d")
 library(dplyr)
 CaseProg <- CaseProg %>% slice(-c(1,2))
 CoachImp <- CoachImp %>% slice(-c(1,2))
+FIND <- FIND %>% slice(-c(78))
 #Remove test response RS200 from CaseProg
 CaseProg <- CaseProg %>% slice(-c(45))
 #Remove duplicate response RS039 
@@ -185,6 +198,21 @@ Consents2 <- data.frame("RSID" = Consents2$RSID,
                         "Recontact" = Consents2$recontact,
                         "StaffSignature"= Consents2$Staff.Signature)
 
+FIND <- data.frame("RSID" = FIND$rSEAL.R1.FFC.001,
+                        "FidelityDate"= FIND$StartDate, 
+                        "IntvSessionComp" = FIND$rSEAL.R1.FFC.002)
+
+HTP <- data.frame("RSID" = HTP$rSEAL.R1.HFC.001,
+                        "FidelityDate"= HTP$StartDate, 
+                        "IntvSessionComp" = HTP$rSEAL.R1.HFC.002)
+
+#Select only session 10 cases and format RSID's
+FIND <- FIND[FIND$IntvSessionComp == 10,]
+HTP <- HTP[HTP$IntvSessionComp == 10,]
+Fidelity <- full_join(FIND,HTP)
+Fidelity$RSID <- str_pad(Fidelity$RSID, width=3, side="left", pad="0")
+Fidelity$RSID <- paste("RS", Fidelity$RSID,sep="")
+
 #Select/merge consent data to align to just one case
 Consents2.1 <- Consents2[rowSums(is.na(Consents2)) < 3, ]
 Consents2.2 <- Consents2.1[match(unique(Consents2.1$RSID), Consents2.1$RSID),]
@@ -206,7 +234,11 @@ Consents5 <- left_join(Consents3,Consents4.3)
 
 LENATracker <- data.frame("RSID" = LENATracker$RSID,
                         "LENA1Expected" = LENATracker$LENA1Expected,
-                        "LENA2Expected"= LENATracker$LENA2Expected)
+                        "LENA2Expected"= LENATracker$LENA2Expected,
+                        "LENA3Expected"= LENATracker$LENA3Expected,
+                        "LENA4Expected"= LENATracker$LENA4Expected,
+                        "LENA5Expected"= LENATracker$LENA5Expected,
+                        "LENA6Expected"= LENATracker$LENA6Expected)
 LENADataW1 <- data.frame("RSID" = LENADataW1$RSID,
                         "LENAD1DataW1" = LENADataW1$FullHours_D1,
                         "LENAD2DataW1"= LENADataW1$FullHours_D2,
@@ -217,6 +249,7 @@ LENADataW2 <- data.frame("RSID" = LENADataW2$RSID,
                         "LENAD2DataW2"= LENADataW2$FullHours_D2,
                         "LENAD3OptOut"= LENADataW2$D1_OptOut,
                         "LENAD4OptOut"= LENADataW2$D2_OptOut)
+LENADataW2 <- LENADataW2[match(unique(LENADataW2$RSID), LENADataW2$RSID),]
 CaseProg <- data.frame("RSID" = CaseProg$ExternalReference,
                         "Survey1_OptOut" = CaseProg$Q2_1_TEXT,
                         "Survey2_OptOut" = CaseProg$Q2_2_TEXT,
@@ -254,6 +287,7 @@ EnrollmentConsents[EnrollmentConsents$RSID=="RS005","StaffSignature"] <- "2021-0
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW1)
 EnrollmentConsents <- full_join(EnrollmentConsents,LENADataW2)
 EnrollmentConsents <- left_join(EnrollmentConsents,LENATracker, by = "RSID")
+EnrollmentConsents <- left_join(EnrollmentConsents,Fidelity, by = "RSID")
 EnrollmentConsents <- left_join(EnrollmentConsents,CaseProg, by = "RSID")
 library(dplyr)
 Enrollment <- left_join(EnrollmentConsents, Enrollment)
@@ -281,13 +315,14 @@ Test3 <- today - as.Date(Enrollment$PDR2Actual, "%y-%m-%d")
 Test4 <- today - as.Date(Enrollment$LENA1Expected, "%y-%m-%d")
 Test4.1 <- today - as.Date(Enrollment$LENAD1DiaryActual, "%y-%m-%d")
 Test5 <- today - as.Date(Enrollment$LENA2Expected, "%y-%m-%d")
-Test6 <- today - as.Date(Enrollment$CoachImpComplete, "%y-%m-%d")
+Test5.1 <- today - as.Date(Enrollment$LENAD2DiaryActual, "%y-%m-%d")
+Test6 <- today - as.Date(Enrollment$FidelityDate, "%y-%m-%d")
 Test7 <- today - as.Date(Enrollment$Survey3Actual, "%y-%m-%d")
 Test8 <- today - as.Date(Enrollment$Survey4Actual, "%y-%m-%d")
 Test9 <- today - as.Date(Enrollment$PDR5Actual, "%y-%m-%d")
-Test10 <- today - as.Date(Enrollment$PDR6Actual, "%y-%m-%d")
+Test10 <- today - as.Date(Enrollment$LENA3Expected, "%y-%m-%d")
 Test11 <- today - as.Date(Enrollment$LENAD3DiaryActual, "%y-%m-%d")
-Test11.1 <- today - as.Date(Enrollment$LENAD4DiaryActual, "%y-%m-%d")
+Test11.1 <- today - as.Date(Enrollment$LENA4Expected, "%y-%m-%d")
 Enrollment1 <- Enrollment %>%
       select(RSID:LENAD4DiaryActual) %>%
       mutate(
@@ -386,9 +421,9 @@ Enrollment6 <- Enrollment5%>%
       LENAD1DiaryStatus = case_when(
       DropOutDate > start & is.na(LENAD1DiaryActual) ~ "Opt-Out",
       LENAW1D1Log_OptOut > start  ~ "Opt-Out",
-      Test4 > 4 & is.na(LENAD1DiaryActual) ~ "Delinquent",
-      Test4 <= 4 & Test4 >= 2 & is.na(LENAD1DiaryActual) ~ "Warning",
-      Test4 < 2 & is.na(LENAD1DiaryActual) ~ "On-Track",
+      Test4 > 3 & is.na(LENAD1DiaryActual) ~ "Delinquent",
+      Test4 <= 3 & Test4 >= 1 & is.na(LENAD1DiaryActual) ~ "Warning",
+      Test4 < 1 & is.na(LENAD1DiaryActual) ~ "On-Track",
       LENAD2DiaryActual > start & is.na(LENAD1DiaryActual) ~ "Delinquent",
       LENAD1DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -400,9 +435,9 @@ Enrollment6.1 <- Enrollment6%>%
       LENAD1DataStatus = case_when(
       DropOutDate > start & is.na(LENAD1DataW1) ~ "Opt-Out",
       Enrollment6$LENAD1OptOut > start & is.na(LENAD1DataW1) ~ "Opt-Out",
-      Test4.1 > 7 & is.na(LENAD1DataW1) ~ "Delinquent",
-      Test4.1 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW1) ~ "Warning",
-      Test4.1 < 3 & is.na(LENAD1DataW1) ~ "On-Track",
+      Test4 > 21 & is.na(LENAD1DataW1) ~ "Delinquent",
+      Test4 <= 21 & Test4 >= 14 & is.na(LENAD1DataW1) ~ "Warning",
+      Test4 < 14 & is.na(LENAD1DataW1) ~ "On-Track",
       LENAD2DiaryActual > start & is.na(LENAD1DataW1) ~ "Delinquent",
       LENAD1DataW1 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -433,9 +468,9 @@ Enrollment7.1 <- Enrollment7%>%
       LENAD2DataStatus = case_when(
       DropOutDate > start & is.na(LENAD2DataW1) ~ "Opt-Out",
       Enrollment7$LENAD2OptOut > start & is.na(LENAD2DataW1) ~ "Opt-Out",
-      Test6 > 7 & is.na(LENAD2DataW1) ~ "Delinquent",
-      Test6 <= 7 & Test4.1 >= 3 & is.na(LENAD2DataW1) ~ "Warning",
-      Test6 < 3 & is.na(LENAD2DataW1) ~ "On-Track",
+      Test5 > 21 & is.na(LENAD2DataW1) ~ "Delinquent",
+      Test5 <= 21 & Test5 >= 14 & is.na(LENAD2DataW1) ~ "Warning",
+      Test5 < 14 & is.na(LENAD2DataW1) ~ "On-Track",
       LENAD2DiaryActual > start & is.na(LENAD2DataW1) ~ "Delinquent",
       LENAD2DataW1 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -513,9 +548,9 @@ Enrollment12 <- Enrollment11%>%
       LENAD3DiaryStatus = case_when(
       DropOutDate > start & is.na(LENAD3DiaryActual) ~ "Opt-Out",
       LENAW2D1Log_OptOut > start  ~ "Opt-Out",
-      Test10 > 4 & is.na(LENAD3DiaryActual) ~ "Delinquent",
-      Test10 <= 4 & Test10 >= 2 & is.na(LENAD3DiaryActual) ~ "Warning",
-      Test10 < 2 & is.na(LENAD3DiaryActual) ~ "On-Track",
+      Test10 > 3 & is.na(LENAD3DiaryActual) ~ "Delinquent",
+      Test10 <= 3 & Test10 >= 1 & is.na(LENAD3DiaryActual) ~ "Warning",
+      Test10 < 1 & is.na(LENAD3DiaryActual) ~ "On-Track",
       LENAD4DiaryActual > start & is.na(LENAD3DiaryActual) ~ "Delinquent",
       LENAD3DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
@@ -527,9 +562,9 @@ Enrollment12.1 <- Enrollment12%>%
       LENAD3DataStatus = case_when(
       DropOutDate > start & is.na(LENAD1DataW2) ~ "Opt-Out",
       Enrollment12$LENAD3OptOut > start & is.na(LENAD1DataW2) ~ "Opt-Out",
-      Test11 > 7 & is.na(LENAD1DataW2) ~ "Delinquent",
-      Test11 <= 7 & Test4.1 >= 3 & is.na(LENAD1DataW2) ~ "Warning",
-      Test11 < 3 & is.na(LENAD1DataW2) ~ "On-Track",
+      Test10 > 21 & is.na(LENAD1DataW2) ~ "Delinquent",
+      Test10 <= 21 & Test10 >= 14 & is.na(LENAD1DataW2) ~ "Warning",
+      Test10 < 14 & is.na(LENAD1DataW2) ~ "On-Track",
       LENAD3DiaryActual > start & is.na(LENAD1DataW2) ~ "Delinquent",
       LENAD1DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -541,9 +576,9 @@ Enrollment13 <- Enrollment12.1%>%
       LENAD4DiaryStatus = case_when(
       DropOutDate > start & is.na(LENAD4DiaryActual) ~ "Opt-Out",
       LENAW2D2Log_OptOut > start  ~ "Opt-Out",
-      Test11 > 3 & is.na(LENAD4DiaryActual) ~ "Delinquent",
-      Test11 <= 3 & Test >= 1 & is.na(LENAD4DiaryActual) ~ "Warning",
-      Test11 < 1 & is.na(LENAD4DiaryActual) ~ "On-Track",
+      Test11.1 > 3 & is.na(LENAD4DiaryActual) ~ "Delinquent",
+      Test11.1 <= 3 & Test11.1 >= 1 & is.na(LENAD4DiaryActual) ~ "Warning",
+      Test11.1 < 1 & is.na(LENAD4DiaryActual) ~ "On-Track",
       LENAD4DiaryActual > start       ~ "Complete",
       TRUE                      ~ "NA"
       )
@@ -553,10 +588,10 @@ Enrollment13.1 <- Enrollment13%>%
       mutate(
       LENAD4DataStatus = case_when(
       DropOutDate > start & is.na(LENAD2DataW2) ~ "Opt-Out",
-      Enrollment13$LENAD4OptOut > start & is.na(LENAD2DataW2) ~ "Opt-Out",
-      Test11.1 > 7 & is.na(LENAD2DataW2) ~ "Delinquent",
-      Test11.1 <= 7 & Test11.1 >= 3 & is.na(LENAD2DataW2) ~ "Warning",
-      Test11.1 < 3 & is.na(LENAD2DataW2) ~ "On-Track",
+      LENAD4OptOut > start & is.na(LENAD2DataW2) ~ "Opt-Out",
+      Test11.1 > 21 & is.na(LENAD2DataW2) ~ "Delinquent",
+      Test11.1 <= 21 & Test11.1 >= 14 & is.na(LENAD2DataW2) ~ "Warning",
+      Test11.1 < 14 & is.na(LENAD2DataW2) ~ "On-Track",
       LENAD2DiaryActual > start & is.na(LENAD2DataW2) ~ "Delinquent",
       LENAD2DataW2 > 0       ~ "Complete",
       TRUE                      ~ "NA"
@@ -575,28 +610,28 @@ ConsentComp<- (Enrollment13.1$ConsentStatus== "Complete")
 ConsentComp <- length(grep("TRUE", ConsentComp))
 ConsentInProg<- (Enrollment13.1$ConsentStatus != "Complete")
 ConsentInProg <- length(grep("TRUE", ConsentInProg))
-PostConsentComp<- (Enrollment13.1$ConsentStatus == "Complete" & Enrollment13.1$PostConsentStatus == "Complete")
+PostConsentComp<- (Enrollment13.1$PostConsentStatus == "Complete")
 PostConsentComp<- length(grep("TRUE", PostConsentComp))
-PostConsentInProg<- (Enrollment13.1$ConsentStatus == "Complete" & Enrollment13.1$PostConsentStatus != "Complete")
+PostConsentInProg<- (Enrollment13.1$PostConsentStatus != "Complete")
 PostConsentInProg <- length(grep("TRUE", PostConsentInProg))
 Wv1DropOut <- (Enrollment13.1$DropOutStage == 1)
 Wv1DropOut <- length(grep("TRUE", Wv1DropOut))
-Wv1Comp<-  ((Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Complete") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Opt-Out"))
-Wv1Comp <- (length(grep("TRUE", Wv1Comp)) - Wv1DropOut)
-Wv1InProg<- ((Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Delinquent") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "Warning") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "On-Track") | (Enrollment15$Instrument == "LENAD2DiaryStatus" & Enrollment15$Status == "NA"))
+Wv1Comp<- ((Enrollment13.1$LENAD2DiaryStatus == "Complete" | Enrollment13.1$LENAD2DiaryStatus == "Opt-Out") & is.na(Enrollment13.1$DropOutDate))
+Wv1Comp <- (length(grep("TRUE", Wv1Comp))) 
+Wv1InProg<- (Enrollment13.1$LENAD2DiaryStatus == "NA" | Enrollment13.1$LENAD2DiaryStatus == "On-Track" | Enrollment13.1$LENAD2DiaryStatus == "Delinquent" | Enrollment13.1$LENAD2DiaryStatus == "Warning") & is.na(Enrollment13.1$DropOutDate)
 Wv1InProg <- length(grep("TRUE", Wv1InProg))
-IntvComp<- (Enrollment13.1$CoachImpComplete > "2020-07-01")
+IntvComp<- (Enrollment13.1$FidelityDate > "2020-07-01")
 IntvComp <- length(grep("TRUE", IntvComp))
 IntvDropOut <- (Enrollment13.1$DropOutStage == 2)
 IntvDropOut <- length(grep("TRUE", IntvDropOut))
-IntvInProg<- (is.na(Enrollment13.1$CoachImpComplete) & Enrollment13.1$LENAD2DiaryStatus == "Complete" | Enrollment13.1$LENAD2DiaryStatus == "Opt-Out") 
-IntvInProg <- (length(grep("TRUE", IntvInProg))-(Wv1DropOut+IntvDropOut))
+IntvInProg<- (is.na(Enrollment13.1$FidelityDate) & Enrollment13.1$LENAD2DiaryStatus == "Complete" | Enrollment13.1$LENAD2DiaryStatus == "Opt-Out") & is.na(Enrollment13.1$DropOutDate)
+IntvInProg <- (length(grep("TRUE", IntvInProg)))
 Wv2DropOut <- (Enrollment13.1$DropOutStage == 3)
 Wv2DropOut <- length(grep("TRUE", Wv2DropOut))
-Wv2Comp<- ((Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Complete") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Opt-Out"))
+Wv2Comp<- ((Enrollment13.1$FidelityDate > "2020-07-01") & Enrollment13.1$LENAD4DiaryStatus == "Complete" | Enrollment13.1$LENAD4DiaryStatus == "Opt-Out") 
 Wv2Comp <- (length(grep("TRUE", Wv2Comp)) - (Wv2DropOut + Wv1DropOut + IntvDropOut))
-Wv2InProg<- ((Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Delinquent") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "Warning") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "On-Track") | (Enrollment15$Instrument == "LENAD4DiaryStatus" & Enrollment15$Status == "NA") & (Enrollment15$Instrument == "Surv3Status" & Enrollment15$Status == "Complete"))
-Wv2InProg <- length(grep("TRUE", Wv2InProg)-(Wv1DropOut+IntvDropOut))
+Wv2InProg<- ((Enrollment13.1$FidelityDate > "2020-07-01") & (Enrollment13.1$LENAD4DiaryStatus == "NA" | Enrollment13.1$LENAD4DiaryStatus == "Delinquent" | Enrollment13.1$LENAD4DiaryStatus == "Warning" | Enrollment13.1$LENAD4DiaryStatus == "On-Track"))
+Wv2InProg <- length(grep("TRUE", Wv2InProg)-(Wv1DropOut+Wv2DropOut + IntvDropOut))
 Wv3DropOut <- (Enrollment13.1$DropOutStage == 4)
 Wv3InProg<- Wv2Comp
 Wv3DropOut <- length(grep("TRUE", Wv3DropOut))

@@ -25,8 +25,8 @@ surveys
 #Download a specific survey from Qualtrics and loads it into R
 #Download rSEAL Survey 1
 rSEAL_Survey1 <- fetch_survey(surveyID = surveys$id[84], 
-                              save_dir = "/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/Wave_1/Qualtrics/Survey_1/RDS", 
+                              save_dir = '~/Box/SEAL-r/rSEAL_Data/', 
                               force_request = TRUE,
                               verbose = TRUE)
-rSEAL_Survey1Read <- read_survey("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/02_rSEAL_Data/Wave_1/Qualtrics/Survey_1/RDS/SV_9LHqcrf7Xu5fmtL.rds")
+rSEAL_Survey1Read <- read_survey('~/Box/SEAL-r/rSEAL_Data/Survey1Test/SV_9LHqcrf7Xu5fmtL.rds')
 rSEAL_Survey1Read
