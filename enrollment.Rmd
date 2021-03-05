@@ -148,7 +148,9 @@ library(dplyr)
 CoachImp <- CoachImp %>% slice(-c(1,2))
 FIND <- FIND %>% slice(-c(78))
 #Remove test response RS200 from CaseProg
-CaseProg <- CaseProg %>% slice(-c(45))
+CaseProg <- CaseProg %>% slice(-c(28))
+#Edit date for drop out for RS027 since in wrong format
+CaseProg[CaseProg$RSID == "RS027", "DropOutDate"] <- "12/31/20"
 #Remove duplicate response RS039 
 CoachImp <- CoachImp %>% slice(-c(14))
 #Classify Tests
