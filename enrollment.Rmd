@@ -9,86 +9,83 @@ output:
     toc: TRUE
 ---
 
-```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-library(magrittr)
-library(codified)
-library(rlang)
-library(epiDisplay)
-library(forcats)
-library(tibble)
-library(tidyr)
-library(checkmate)
-library(testthat)
-library(cowplot)
-library(readxl)
-library(knitr)
-library(formattable)
-library(ggpubr)
-library(frequency)
-library(plotly)
-library(emmeans)
-library(kableExtra)
-library(papaja)
-library(kableExtra)
-library(dplyr)
-library(RColorBrewer)
-library(tidyverse)
-library(ggformula)
-library(lubridate)
-library(plyr)
-library(readr)
-library(dplyr)
-library(haven)
-library(RColorBrewer)
-library(ggplot2)
-library(DiagrammeR)
-library(DiagrammeRsvg)
-library(rsvg)
-library(reshape2)
-library(skimr)
-library(here)
-library(xlsx)
+```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, message = FALSE, cache=FALSE}
+if(!require(magrittr)) install.packages("magrittr",repos = "http://cran.us.r-project.org")
+if(!require(codified)) install.packages("codified",repos = "http://cran.us.r-project.org")
+if(!require(rlang)) install.packages("rlang",repos = "http://cran.us.r-project.org")
+if(!require(epiDisplay)) install.packages("epiDisplay",repos = "http://cran.us.r-project.org")
+if(!require(forcats)) install.packages("forcats",repos = "http://cran.us.r-project.org")
+if(!require(tibble)) install.packages("tibble",repos = "http://cran.us.r-project.org")
+if(!require(tidyr)) install.packages("tidyr",repos = "http://cran.us.r-project.org")
+if(!require(checkmate)) install.packages("checkmate",repos = "http://cran.us.r-project.org")
+if(!require(testthat)) install.packages("testthat",repos = "http://cran.us.r-project.org")
+if(!require(cowplot)) install.packages("cowplot",repos = "http://cran.us.r-project.org")
+if(!require(readxl)) install.packages("readxl",repos = "http://cran.us.r-project.org")
+if(!require(knitr)) install.packages("knitr",repos = "http://cran.us.r-project.org")
+if(!require(formattable)) install.packages("formattable",repos = "http://cran.us.r-project.org")
+if(!require(ggpubr)) install.packages("ggpubr",repos = "http://cran.us.r-project.org")
+if(!require(frequency)) install.packages("frequency",repos = "http://cran.us.r-project.org")
+if(!require(plotly)) install.packages("plotly",repos = "http://cran.us.r-project.org")
+if(!require(emmeans)) install.packages("emmeans",repos = "http://cran.us.r-project.org")
+if(!require(kableExtra)) install.packages("KableExtra",repos = "http://cran.us.r-project.org")
+if(!require(papaja)) install.packages("papaja",repos = "http://cran.us.r-project.org")
+if(!require(dplyr)) install.packages("dplyr",repos = "http://cran.us.r-project.org")
+if(!require(RColorBrewer)) install.packages("RColorBrewer",repos = "http://cran.us.r-project.org")
+if(!require(tidyverse)) install.packages("tidyverse",repos = "http://cran.us.r-project.org")
+if(!require(ggformula)) install.packages("ggformula",repos = "http://cran.us.r-project.org")
+if(!require(lubridate)) install.packages("lubridate",repos = "http://cran.us.r-project.org")
+if(!require(plyr)) install.packages("plyr",repos = "http://cran.us.r-project.org")
+if(!require(readr)) install.packages("readr",repos = "http://cran.us.r-project.org")
+if(!require(dplyr)) install.packages("dplyr",repos = "http://cran.us.r-project.org")
+if(!require(haven)) install.packages("haven",repos = "http://cran.us.r-project.org")
+if(!require(ggplot2)) install.packages("ggplot2",repos = "http://cran.us.r-project.org")
+if(!require(DiagrammeR)) install.packages("DiagrammeR",repos = "http://cran.us.r-project.org")
+if(!require(DiagrammeRsvg)) install.packages("DiagrammeRsvg",repos = "http://cran.us.r-project.org")
+#if(!require(rsvg)) install.packages("rsvg",repos = "http://cran.us.r-project.org")
+if(!require(reshape2)) install.packages("reshape2",repos = "http://cran.us.r-project.org")
+if(!require(skimr)) install.packages("skimr",repos = "http://cran.us.r-project.org")
+if(!require(here)) install.packages("here",repos = "http://cran.us.r-project.org")
+if(!require(xlsx)) install.packages("xlsx",repos = "http://cran.us.r-project.org")
+if(!require(rio)) install.packages("rio",repos = "http://cran.us.r-project.org")
 knitr::opts_chunk$set(echo = TRUE)
 options(knitr.table.format = "html", knitr.kable.NA = '') 
 ```
 
 
-```{r Read in Files and set-up columns, echo = FALSE, warning=FALSE, message=FALSE}
+```{r Read in Files and set-up columns, echo=FALSE, warning=FALSE, include=FALSE, message = FALSE, cache=FALSE}
+
 #Read Masterfile
 library(haven)
-masterfile <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/masterfile.sav'))
-LENADataW1 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W1"))
-LENADataW2 <- data.frame(read_xlsx("/Volumes/psy-ctn/psy-ctn/SNAPLab/SNAP Projects/SEAL/00_rSEAL/01_Data_Management/LENAcomposite.xlsx", sheet = "W2"))
+library(boxr)
+library(rio)
+library(readxl)
+box_auth_service()
+box_setwd(132211861740)
+masterfile <- data.frame(read_sav(file = box_dl(779383318727, overwrite = TRUE)))
+#LENA Data
+LENADataW1 <- data.frame(read_xlsx(box_dl(786237121897, overwrite = TRUE)))
+LENADataW2 <- data.frame(read_xlsx(box_dl(786236300573, overwrite = TRUE)))                     
 #rSEAL Manual Consent Data
-Consents1 <- data.frame(read_xlsx('~/Box/SEAL-r/rSEAL_Data/rSEAL_manual_consents.xlsx', 'Sheet1'))
-#rSEAL Test Consent Data
-library(haven)
-Consents2 <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Consent_Tracker.sav'))
+Consents1 <- data.frame(read_xlsx(box_dl(779380836611, overwrite = TRUE))) 
+#rSEAL Consent Tracker
+Consents2 <- data.frame(read.csv(file = box_dl(785633108805, overwrite = TRUE)))
 Consents2 <- subset(Consents2, select = -c(2:17))
 Consents2$recontact <- as.numeric(Consents2$recontact)
-#Consents2 <- data.frame(read_xlsx('~/Dropbox (University of Oregon)/SEAL R01/_Remote SEAL/rSEAL_Data/Consent_Tracker.xlsx', 'Sheet1'))
 
 #Read in LENA Tracker for Expected Dates
-LENATracker1 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w1.csv'))
-LENATracker2 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w2.csv'))
-LENATracker3 <- data.frame(read.csv('~/Box/SEAL-r/rSEAL_Data/LENA_Data_w3.csv'))
+LENATracker1 <- data.frame(read.csv(box_dl(786241215058, overwrite = TRUE)))
+LENATracker2 <- data.frame(read.csv(box_dl(786237496379, overwrite = TRUE)))
+LENATracker3 <- data.frame(read.csv(box_dl(786240935751, overwrite = TRUE)))
 #Read in Case Progression Log
-CaseProg <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Case_Progression_Log.sav'))
+CaseProg <- data.frame(read.csv(file = box_dl(785626649189, overwrite = TRUE)))
 
 #Read in Fidelity Data
-library(haven)
-FIND <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/FIND_Fidelity.sav'))
-HTP <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/HTP_Fidelity.sav'))
+FIND <- data.frame(read_sav(file = box_dl(786242280747, overwrite = TRUE)))
+HTP <- data.frame(read_sav(file = box_dl(786243081157, overwrite = TRUE)))
 
 #Read in Coach Impressions
-CoachImp <- data.frame(read_sav(file = '~/Box/SEAL-r/rSEAL_Data/Coach_Impressions_Form.sav'))
-#masterfile$rSEAL.C1.LDL.003[masterfile$rSEAL.C1.LDL.003 == ""] <- NA
-#masterfile$rSEAL.C1.LDL.029[masterfile$rSEAL.C1.LDL.029 == ""] <- NA
-#masterfile$rSEAL.C2.LDL.003[masterfile$rSEAL.C2.LDL.003 == ""] <- NA
-#masterfile$rSEAL.C2.LDL.029[masterfile$rSEAL.C2.LDL.029 == ""] <- NA
-#Format Dates for Consent Data
-#Consents2$Informed.consent <- as.Date(Consents2$Informed.consent , "%m/%d/%Y")
-#Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature , "%m/%d/%Y")
+CoachImp <- data.frame(read_sav(file = box_dl(786245463583, overwrite = TRUE)))
+
 LENATracker1$LENA1Expected <- as.Date(LENATracker1$ExpectedDt1 , "%Y-%m-%d")
 LENATracker1$LENA2Expected <- as.Date(LENATracker1$ExpectedDt2 , "%Y-%m-%d")
 LENATracker2$LENA3Expected <- as.Date(LENATracker2$ExpectedDt1 , "%Y-%m-%d")
@@ -154,22 +151,6 @@ CaseProg <- CaseProg %>% slice(-c(28))
 CaseProg[CaseProg$RSID == "RS027", "DropOutDate"] <- "12/31/20"
 #Remove duplicate response RS039 
 CoachImp <- CoachImp %>% slice(-c(14))
-#Classify Tests
-#ConsentCompletion <- masterfile$ConsentCompletion <- ifelse(masterfile$SubInfoStart > #"2020-07-01", "Complete", "Incomplete")
-#SubInfoCompletion <- masterfile$SubInfoCompletion <- ifelse(masterfile$SubInfoStart > #"2020-07-01", "Complete", "Incomplete")
-#Survey1Completion <- masterfile$Survey1Completion <- ifelse(masterfile$Survey1Start > #"2020-07-01", "Complete", "Incomplete")
-#Survey2Completion <- masterfile$Survey2Completion <- ifelse(masterfile$Survey2Start > #"2020-07-01", "Complete", "Incomplete")
-#PDR2Completion <- masterfile$PDR2Completion <- ifelse(masterfile$PDR2Start > #"2020-07-01", "Complete", "Incomplete")
-#PDR3Completion <- masterfile$PDR3Completion<- ifelse(masterfile$PDR3Start > "2020-07-01", #"Complete", "Incomplete")
-#LENAD1DiaryCompletion <- masterfile$LENAD1DiaryCompletion <- #ifelse(masterfile$LENAD1Start > "2020-07-01", "Complete", "Incomplete")
-#LENAD2DiaryCompletion <- masterfile$LENAD2DiaryCompletion<- ifelse(masterfile$LENAD2Start #> "2020-07-01", "Complete", "Incomplete")
-#Survey3Completion <- masterfile$Survey3Completion <- ifelse(masterfile$Survey3Start > #"2020-07-01", "Complete", "Incomplete")
-#Survey4Completion <- masterfile$Survey4Completion <- ifelse(masterfile$Survey4Start > #"2020-07-01", "Complete", "Incomplete")
-#PDR5Completion <- masterfile$PDR5Completion <- ifelse(masterfile$PDR5Start > #"2020-07-01", "Complete", "Incomplete")
-#PDR6Completion <- masterfile$PDR6Completion<- ifelse(masterfile$PDR6Start > "2020-07-01", #"Complete", "Incomplete")
-#LENAD3DiaryCompletion <- masterfile$LENAD3DiaryCompletion <- #ifelse(masterfile$LENAD3Start > "2020-07-01", "Complete", "Incomplete")
-#LENAD4DiaryCompletion <- masterfile$LENAD4DiaryCompletion <- #ifelse(masterfile$LENAD4Start > "2020-07-01", "Complete", "Incomplete")
-#CoachImpCompletion <- CoachImp$CoachImpCompletion <- ifelse(CoachImp$RecordedDate > #"2020-07-01", "Complete", "Incomplete")
 Staff.Signature <- Consents2$Staff.Signature <- ifelse(Consents2$Completed == "2",(as.character(Consents2$StartDate)), "NA")
 Consents2$Staff.Signature <- as.Date(Consents2$Staff.Signature,"%Y-%m-%d" )
 Informed.consent <- Consents2$Informed.consent <- ifelse(Consents2$Completed == "1",(as.character(Consents2$StartDate)), "NA")
@@ -294,13 +275,6 @@ EnrollmentConsents <- left_join(EnrollmentConsents,Fidelity, by = "RSID")
 EnrollmentConsents <- left_join(EnrollmentConsents,CaseProg, by = "RSID")
 library(dplyr)
 Enrollment <- left_join(EnrollmentConsents, Enrollment)
-#Classify Tests
-#Enrollment$ConsentCompletion <- ifelse(Enrollment$Informed.Consent > "2020-07-01", #"Complete", "Incomplete")
-#Enrollment$LENAD1DataCompletion <- ifelse(Enrollment$LENAD1DataW1  > 0, "Complete", #"Incomplete")
-#Enrollment$LENAD2DataCompletion <- ifelse(Enrollment$LENAD2DataW1 > 0, "Complete", #"Incomplete")
-#Enrollment$LENAD3DataCompletion <- ifelse(Enrollment$LENAD1DataW2  > 0, "Complete", #"Incomplete")
-#Enrollment$LENAD4DataCompletion <- ifelse(Enrollment$LENAD2DataW2   > 0, "Complete", #"Incomplete")
-#Enrollment$IntvCompletion <- ifelse(Enrollment$CoachImpComplete > "2020-07-01", #"Complete", "Incomplete")
 ```
 
 ```{r SEAL Counts by Wave, echo = FALSE, fig.width=5, fig.height=4, message=FALSE, warning=FALSE}
