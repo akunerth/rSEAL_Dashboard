@@ -1,0 +1,43 @@
+---
+title: "FamTracker - Research"
+author: 
+date: "Last Updated: 12/15/2020"
+output: 
+  html_document:
+    theme: flatly
+---
+```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(knitr)
+options(digits=1)
+library(ggpubr)
+library(plotly)
+library(emmeans)
+library(papaja)
+library(ggpubr)
+library(kableExtra)
+library(descr)
+library(dplyr)
+library(magick)
+library(tidyverse)
+library(ggformula)
+library(lubridate)
+library(janitor)
+library(plyr)
+library(tigerstats)
+library(plotrix)
+library(RColorBrewer)
+options(knitr.table.format = "html", knitr.kable.NA = '') 
+```
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<iframe src ="https://dat-snaplab.shinyapps.io/RecruitmentPage/" style="border: none; width: 1500px; height: 1000px;"/>
+</iframe>
