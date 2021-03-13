@@ -6,12 +6,6 @@ navbar:
       menu:
       - text: "Enrollment"
         href: enrollment.html
-      - text: "Reports"
-        href: reports.html
-      - text: "Consort"
-        href: consort.html
-      - text: "Recruitment Sources"
-        href: Sources.html
       - text: "FamTracker-Research"
         href: recruitment.html
       - text: "Intervention"
