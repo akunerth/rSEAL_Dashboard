@@ -1,11 +1,10 @@
-
 ---
 title: "Current Enrollment"
 author: 
+date: "Last Updated: 3/12/2021"
 output: 
   html_document:
     theme: flatly
-    toc: TRUE
 ---
 
 ```{r load-packages, echo=FALSE, warning=FALSE, include=FALSE, message = FALSE, cache=FALSE}
